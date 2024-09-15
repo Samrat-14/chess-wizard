@@ -23,7 +23,7 @@ export default function Referee() {
 
     let playedMoveIsValid = false;
 
-    // If move is invalid, return false
+    // If move is not present in possible moves, return false
     const validMove = playedPiece.possibleMoves?.some((m) => m.isSamePosition(destination));
     if (!validMove) return false;
 

@@ -79,7 +79,8 @@ export const getCastlingMoves = (king: Piece, boardState: Piece[]): Position[] =
     if (!valid) continue;
 
     // Now add it as a possible move
-    possibleMoves.push(rook.position.clone());
+    // possibleMoves.push(rook.position.clone());
+    possibleMoves.push(new Position(king.position.x + direction * 2, king.position.y));
   }
 
   return possibleMoves;
