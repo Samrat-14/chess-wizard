@@ -1,7 +1,7 @@
 [*] refactor the code
 [*] change marked possible move for castling
-[*] castling should not be possible if King is in check
-[ ] castling should be possible even if tile beside queen side rook is in check
+[*] bug fix: castling should not be possible if King is in check
+[*] bug fix: castling should be possible even if tile beside queen side rook is in check
 [ ] implement click functionality for playing
 [ ] add file and rank numbers
 [ ] change piece images

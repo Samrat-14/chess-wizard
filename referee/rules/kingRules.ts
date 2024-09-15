@@ -56,8 +56,10 @@ export const getCastlingMoves = (king: Piece, boardState: Piece[]): Position[] =
 
     // Now we know the Rook can move to the adjacent side of the King
 
-    // Get the tiles between the Rook and King
-    const concerningTiles = rook.possibleMoves.filter((m) => m.y === king.position.y);
+    // Get the two tiles between rook and king beside the king
+    const concerningTiles = rook.possibleMoves.filter(
+      (m) => m.y === king.position.y && (Math.abs(m.x - king.position.x) === 2 || Math.abs(m.x - king.position.x) === 1)
+    );
 
     const enemyPieces = boardState.filter((p) => p.team !== king.team);
 
