@@ -1,0 +1,55 @@
+#chessboard {
+  width: calc(100vmin - 5%);
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+
+.modal {
+  position: absolute;
+  inset: 0;
+
+  &.hidden {
+    display: none;
+  }
+
+  & .modal-body {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: calc(100vmin - 5%);
+    height: 36vmin;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    & img {
+      width: 12vmin;
+      height: 12vmin;
+      border-radius: 50%;
+      padding: 4vmin;
+      box-sizing: content-box;
+
+      &:hover {
+        cursor: pointer;
+        background-color: rgba(255, 255, 255, 0.25);
+      }
+    }
+
+    & > .checkmate-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5vmin;
+
+      & > span {
+        font-size: 5vmin;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+    }
+  }
+}

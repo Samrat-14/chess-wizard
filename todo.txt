@@ -1,0 +1,17 @@
+[ ] clean the code
+[ ] castling should not be possible if King is in check
+[ ] implement click functionality for playing
+[ ] add file and rank numbers
+[ ] change piece images
+
+[ ] change highlighted possible move for castling
+[ ] highlight initial and final tile
+[ ] show last played move as highlighted tile
+[ ] add animation for movement
+[ ] add sound effects
+[ ] change pawn promotion modal
+
+[ ] implement move list
+[ ] add move notations
+[ ] implement save and reset
+[ ] implement timer
