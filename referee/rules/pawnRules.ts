@@ -2,47 +2,6 @@ import { TeamType } from '@/types';
 import { Pawn, Piece, Position } from '@/models';
 import { isTileOccupied, isTileOccupiedByOpponent } from './generalRules';
 
-export const pawnMove = (
-  initialPosition: Position,
-  desiredPosition: Position,
-  team: TeamType,
-  boardState: Piece[]
-): boolean => {
-  const specialRow = team === TeamType.OUR ? 1 : 6;
-  const pawnDirection = team === TeamType.OUR ? 1 : -1;
-
-  // MOVEMENT LOGIC
-  if (
-    initialPosition.x === desiredPosition.x &&
-    initialPosition.y === specialRow &&
-    desiredPosition.y - initialPosition.y === 2 * pawnDirection
-  ) {
-    if (
-      !isTileOccupied(desiredPosition, boardState) &&
-      !isTileOccupied(new Position(desiredPosition.x, desiredPosition.y - pawnDirection), boardState)
-    ) {
-      return true;
-    }
-  } else if (initialPosition.x === desiredPosition.x && desiredPosition.y - initialPosition.y === pawnDirection) {
-    if (!isTileOccupied(desiredPosition, boardState)) {
-      return true;
-    }
-  }
-
-  // ATTACK LOGIC
-  else if (desiredPosition.x - initialPosition.x === -1 && desiredPosition.y - initialPosition.y === pawnDirection) {
-    if (isTileOccupiedByOpponent(desiredPosition, boardState, team)) {
-      return true;
-    }
-  } else if (desiredPosition.x - initialPosition.x === 1 && desiredPosition.y - initialPosition.y === pawnDirection) {
-    if (isTileOccupiedByOpponent(desiredPosition, boardState, team)) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
 export const getPossiblePawnMoves = (pawn: Piece, boardState: Piece[]): Position[] => {
   const possibleMoves: Position[] = [];
 
@@ -56,6 +15,7 @@ export const getPossiblePawnMoves = (pawn: Piece, boardState: Piece[]): Position
   const leftPosition = new Position(pawn.position.x - 1, pawn.position.y);
   const rightPosition = new Position(pawn.position.x + 1, pawn.position.y);
 
+  // Movement
   if (!isTileOccupied(normalMove, boardState)) {
     possibleMoves.push(normalMove);
 
@@ -64,6 +24,7 @@ export const getPossiblePawnMoves = (pawn: Piece, boardState: Piece[]): Position
     }
   }
 
+  // Upper left position for attack
   if (isTileOccupiedByOpponent(upperLeftAttack, boardState, pawn.team)) {
     possibleMoves.push(upperLeftAttack);
   } else if (!isTileOccupied(upperLeftAttack, boardState)) {
@@ -74,6 +35,7 @@ export const getPossiblePawnMoves = (pawn: Piece, boardState: Piece[]): Position
     }
   }
 
+  // Upper right position for attack
   if (isTileOccupiedByOpponent(upperRightAttack, boardState, pawn.team)) {
     possibleMoves.push(upperRightAttack);
   } else if (!isTileOccupied(upperRightAttack, boardState)) {

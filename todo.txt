@@ -1,4 +1,4 @@
-[ ] clean the code
+[*] refactor the code
 [ ] castling should not be possible if King is in check
 [ ] implement click functionality for playing
 [ ] add file and rank numbers

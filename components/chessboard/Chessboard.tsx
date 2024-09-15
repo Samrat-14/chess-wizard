@@ -59,6 +59,7 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
   const dropPiece = (e: React.MouseEvent) => {
     const chessboard = chessboardRef.current;
     if (activePiece && chessboard) {
+      // Find (x, y) where the piece is dropped
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / (chessboard.clientWidth / 8));
       const y = Math.abs(
         Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
@@ -67,8 +68,10 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
       const currentPiece = pieces.find((p) => p.isSamePosition(grabPosition));
 
       if (currentPiece) {
+        // Check if the played move is valid
         const success = playMove(currentPiece.clone(), new Position(x, y));
 
+        // If not success, snap back to place
         if (!success) {
           // Resets the piece position
           activePiece.style.position = 'relative';

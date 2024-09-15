@@ -27,6 +27,7 @@ export class Board {
   }
 
   calculateAllMoves() {
+    // Set possible valid moves
     for (const piece of this.pieces) {
       piece.possibleMoves = this.getValidMoves(piece, this.pieces);
     }
@@ -46,12 +47,13 @@ export class Board {
       piece.possibleMoves = [];
     }
 
-    // Check if current team still have valid  moves left, otherwise Checkmate
+    // Check if current team still have valid moves left, otherwise Checkmate
     if (
       this.pieces.filter((p) => p.team === this.currentTeam).some((p) => p.possibleMoves && p.possibleMoves.length > 0)
     )
       return;
 
+    // Checkmated! Set the winning team
     this.winningTeam = this.currentTeam === TeamType.OUR ? TeamType.OPPONENT : TeamType.OUR;
   }
 
@@ -135,6 +137,7 @@ export class Board {
       return true;
     }
 
+    // If the move is enPassant, we do this
     if (enPassantMove) {
       this.pieces = this.pieces.reduce((results, piece) => {
         if (piece.isSamePiecePosition(playedPiece)) {
@@ -159,7 +162,10 @@ export class Board {
       }, [] as Piece[]);
 
       this.calculateAllMoves();
-    } else if (validMove) {
+      return true;
+    }
+
+    if (validMove) {
       // Updates the piece position & if the piece is attacked, removes it
       this.pieces = this.pieces.reduce((results, piece) => {
         if (piece.isSamePiecePosition(playedPiece)) {
@@ -187,11 +193,10 @@ export class Board {
       }, [] as Piece[]);
 
       this.calculateAllMoves();
-    } else {
-      return false;
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   clone(): Board {

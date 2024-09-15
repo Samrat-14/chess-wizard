@@ -7,7 +7,6 @@ import Chessboard from '@/components/chessboard/Chessboard';
 import { PieceType, TeamType } from '@/types';
 import { initialBoard } from '@/constants';
 import { Board, Pawn, Piece, Position } from '@/models';
-import { bishopMove, kingMove, knightMove, pawnMove, queenMove, rookMove } from '@/referee/rules';
 
 export default function Referee() {
   const [board, setBoard] = useState<Board>(initialBoard.clone());
@@ -24,6 +23,7 @@ export default function Referee() {
 
     let playedMoveIsValid = false;
 
+    // If move is invalid, return false
     const validMove = playedPiece.possibleMoves?.some((m) => m.isSamePosition(destination));
     if (!validMove) return false;
 
@@ -37,6 +37,7 @@ export default function Referee() {
       // Playing the move
       playedMoveIsValid = clonedBoard.playMove(enPassantMove, validMove, playedPiece, destination);
 
+      // Check if player won after each played move
       if (clonedBoard.winningTeam) {
         checkmateModalRef.current?.classList.remove('hidden');
       }
@@ -46,6 +47,7 @@ export default function Referee() {
 
     // For promoting a Pawn
     const promotionRow = playedPiece.team === TeamType.OUR ? 7 : 0;
+
     if (destination.y === promotionRow && playedPiece.isPawn) {
       modalRef.current?.classList.remove('hidden');
 
@@ -89,44 +91,13 @@ export default function Referee() {
     return false;
   };
 
-  const isValidMove = (
-    initialPosition: Position,
-    desiredPosition: Position,
-    type: PieceType,
-    team: TeamType
-  ): boolean => {
-    let validMove = false;
-
-    switch (type) {
-      case PieceType.PAWN:
-        validMove = pawnMove(initialPosition, desiredPosition, team, board.pieces);
-        break;
-      case PieceType.KNIGHT:
-        validMove = knightMove(initialPosition, desiredPosition, team, board.pieces);
-        break;
-      case PieceType.BISHOP:
-        validMove = bishopMove(initialPosition, desiredPosition, team, board.pieces);
-        break;
-      case PieceType.ROOK:
-        validMove = rookMove(initialPosition, desiredPosition, team, board.pieces);
-        break;
-      case PieceType.QUEEN:
-        validMove = queenMove(initialPosition, desiredPosition, team, board.pieces);
-        break;
-      case PieceType.KING:
-        validMove = kingMove(initialPosition, desiredPosition, team, board.pieces);
-    }
-
-    return validMove;
-  };
-
   const promotePawn = (pieceType: PieceType) => {
     if (!promotionPawn) return;
 
     setBoard(() => {
-      const cloneBoard = board.clone();
+      const clonedBoard = board.clone();
 
-      cloneBoard.pieces = cloneBoard.pieces.reduce((results, piece) => {
+      clonedBoard.pieces = clonedBoard.pieces.reduce((results, piece) => {
         if (piece.isSamePiecePosition(promotionPawn)) {
           results.push(new Piece(piece.position.clone(), pieceType, piece.team, true));
         } else {
@@ -136,9 +107,14 @@ export default function Referee() {
         return results;
       }, [] as Piece[]);
 
-      cloneBoard.calculateAllMoves();
+      clonedBoard.calculateAllMoves();
 
-      return cloneBoard;
+      // Check if player won just after pawn promotion
+      if (clonedBoard.winningTeam) {
+        checkmateModalRef.current?.classList.remove('hidden');
+      }
+
+      return clonedBoard;
     });
 
     modalRef.current?.classList.add('hidden');
@@ -149,6 +125,7 @@ export default function Referee() {
 
     return `assets/images/${promotionPieceType}_${promotionTeamType}.png`;
   };
+
   const restartGame = () => {
     checkmateModalRef.current?.classList.add('hidden');
     setBoard(initialBoard.clone());
@@ -169,8 +146,10 @@ export default function Referee() {
 
       <div className="modal hidden" ref={checkmateModalRef}>
         <div className="modal-body">
-          <div className="checkmate-body">
-            <span>{board.winningTeam === TeamType.OUR ? 'white' : 'black'} wins!</span>
+          <div className="checkmate-body flex flex-col items-center gap-[2.5vmin]">
+            <span className="text-[5vmin] uppercase font-bold">
+              {board.winningTeam === TeamType.OUR ? 'white' : 'black'} wins!
+            </span>
             <button className="btn-primary" onClick={restartGame}>
               Play again
             </button>
