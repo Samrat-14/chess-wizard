@@ -67,8 +67,15 @@ export const getCastlingMoves = (king: Piece, boardState: Piece[]): Position[] =
       if (enemy.possibleMoves === undefined) continue;
 
       for (const move of enemy.possibleMoves) {
+        // If the King is in check, don't allow castling
+        if (king.isSamePosition(move)) {
+          valid = false;
+          break;
+        }
+        // If the tiles between King and rook are eyed by enemy, don't allow castling
         if (concerningTiles.some((t) => t.isSamePosition(move))) {
           valid = false;
+          break;
         }
 
         if (!valid) break;
@@ -79,7 +86,6 @@ export const getCastlingMoves = (king: Piece, boardState: Piece[]): Position[] =
     if (!valid) continue;
 
     // Now add it as a possible move
-    // possibleMoves.push(rook.position.clone());
     possibleMoves.push(new Position(king.position.x + direction * 2, king.position.y));
   }
 
