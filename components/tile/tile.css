@@ -21,10 +21,18 @@
 
   &.black-tile {
     background-color: var(--primary-color);
+
+    &.tile-selected {
+      background-color: var(--primary-color-selection);
+    }
   }
 
   &.white-tile {
     background-color: var(--secondary-color);
+
+    &.tile-selected {
+      background-color: var(--secondary-color-selection);
+    }
   }
 
   &.tile-highlight:not(.chess-piece-tile)::before {

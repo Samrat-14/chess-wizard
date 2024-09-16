@@ -5,9 +5,9 @@
 :root {
   --primary-color: #779556;
   --primary-color-dark: #6c884f;
-  --mixed-prim: #b9ca43;
+  --primary-color-selection: #b9ca43;
   --secondary-color: #ebecd0;
-  --mixed-sec: #f5f682;
+  --secondary-color-selection: #f5f682;
   --tertiary-color: #ffffa5;
   --bg-color: #202020;
 }

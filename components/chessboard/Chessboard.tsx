@@ -147,11 +147,17 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
       const currentPiece =
         activeSelectedPiece || activePiece ? pieces.find((p) => p.isSamePosition(grabPosition)) : undefined;
 
+      // If tile's position is in possible moves array
       const highlight = currentPiece?.possibleMoves
         ? currentPiece.possibleMoves.some((p) => p.isSamePosition(new Position(i, j)))
         : false;
 
-      board.push(<Tile key={`${i}-${j}`} number={i + j} image={image} highlight={highlight} />);
+      // If tile's piece is selected
+      const isTileSelected = currentPiece ? currentPiece.isSamePosition(new Position(i, j)) : false;
+
+      board.push(
+        <Tile key={`${i}-${j}`} number={i + j} image={image} highlight={highlight} selected={isTileSelected} />
+      );
     }
   }
 
