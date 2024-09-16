@@ -8,7 +8,7 @@
   --primary-color-selection: #b9ca43;
   --secondary-color: #ebecd0;
   --secondary-color-selection: #f5f682;
-  --tertiary-color: #ffffa5;
+  --tertiary-color: #d9dab5;
   --bg-color: #202020;
 }
 
@@ -22,6 +22,10 @@
   padding: 0;
   box-sizing: border-box;
   font-family: var(--font-roboto-slab), sans-serif;
+}
+
+body {
+  overflow: hidden;
 }
 
 #app {

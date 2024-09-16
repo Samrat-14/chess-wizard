@@ -83,6 +83,7 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
       const x = e.clientX;
       const y = e.clientY;
       element.style.position = 'absolute';
+      element.style.zIndex = '10';
       element.style.translate = '-50% -50%';
       element.style.left = `${x}px`;
       element.style.top = `${y}px`;
@@ -101,6 +102,7 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
       const x = e.clientX;
       const y = e.clientY;
       activePiece.style.position = 'absolute';
+      activePiece.style.zIndex = '10';
       activePiece.style.translate = '-50% -50%';
       activePiece.style.left = x < minX ? `${minX}px` : x > maxX ? `${maxX}px` : `${x}px`;
       activePiece.style.top = y < minY ? `${minY}px` : y > maxY ? `${maxY}px` : `${y}px`;
@@ -126,6 +128,7 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
         if (!success) {
           // Resets the piece position
           activePiece.style.position = 'relative';
+          activePiece.style.zIndex = '10';
           activePiece.style.removeProperty('left');
           activePiece.style.removeProperty('top');
           activePiece.style.removeProperty('translate');
