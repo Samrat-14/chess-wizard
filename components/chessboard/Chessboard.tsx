@@ -16,7 +16,57 @@ type ChessboardProps = {
 export default function Chessboard({ playMove, pieces }: ChessboardProps) {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
   const [grabPosition, setGrabPosition] = useState<Position>(new Position(-1, -1));
+  const [activeSelectedPiece, setActiveSelectedPiece] = useState<HTMLElement | null>(null);
+  const [selectedPosition, setSelectedPosition] = useState<Position>(new Position(-1, -1));
   const chessboardRef = useRef<HTMLDivElement>(null);
+
+  const clickPiece = (e: React.MouseEvent) => {
+    const element = e.target as HTMLElement;
+    const chessboard = chessboardRef.current;
+
+    if (chessboard) {
+      const clickX = Math.floor((e.clientX - chessboard.offsetLeft) / (chessboard.clientWidth / 8));
+      const clickY = Math.abs(
+        Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
+      );
+
+      // Check if click start position is same as click end position
+      const isProperClick = grabPosition.isSamePosition(new Position(clickX, clickY));
+
+      // Check if a piece was selected
+      if (activeSelectedPiece) {
+        // If same piece is clicked again, reset selected piece
+        if (activeSelectedPiece === element) {
+          setActiveSelectedPiece(null);
+          return;
+        }
+
+        // Piece was selected, so try to move it
+        const selectedPiece = pieces.find((p) => p.isSamePosition(selectedPosition));
+        if (selectedPiece) {
+          // Check if the played move is valid
+          const success = playMove(selectedPiece.clone(), new Position(clickX, clickY));
+
+          // If move is invalid, but another piece is properly clicked, select it
+          if (!success && element.classList.contains('chess-piece') && isProperClick) {
+            setSelectedPosition(new Position(clickX, clickY));
+            setActiveSelectedPiece(element);
+
+            return;
+          }
+        }
+
+        // If move is valid or currently clicked on blank tile, set active piece to null
+        setActiveSelectedPiece(null);
+      } else {
+        // No piece was selected, so if there is a piece & proper click, grab it
+        if (element.classList.contains('chess-piece') && isProperClick) {
+          setSelectedPosition(new Position(clickX, clickY));
+          setActiveSelectedPiece(element);
+        }
+      }
+    }
+  };
 
   const grabPiece = (e: React.MouseEvent) => {
     const element = e.target as HTMLElement;
@@ -27,6 +77,7 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
       const grabY = Math.abs(
         Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
       );
+
       setGrabPosition(new Position(grabX, grabY));
 
       const x = e.clientX;
@@ -92,7 +143,10 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
       const piece = pieces.find((p) => p.isSamePosition(new Position(i, j)));
       const image = piece ? piece.image : undefined;
 
-      const currentPiece = activePiece ? pieces.find((p) => p.isSamePosition(grabPosition)) : undefined;
+      // Piece which is currently clicked or grabbed
+      const currentPiece =
+        activeSelectedPiece || activePiece ? pieces.find((p) => p.isSamePosition(grabPosition)) : undefined;
+
       const highlight = currentPiece?.possibleMoves
         ? currentPiece.possibleMoves.some((p) => p.isSamePosition(new Position(i, j)))
         : false;
@@ -103,7 +157,14 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
 
   return (
     <>
-      <div onMouseDown={grabPiece} onMouseMove={movePiece} onMouseUp={dropPiece} id="chessboard" ref={chessboardRef}>
+      <div
+        id="chessboard"
+        ref={chessboardRef}
+        onMouseDown={grabPiece}
+        onMouseMove={movePiece}
+        onMouseUp={dropPiece}
+        onClick={clickPiece}
+      >
         {board}
       </div>
     </>

@@ -4,4 +4,6 @@
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
+  border-radius: 0.25rem;
+  overflow: hidden;
 }

@@ -2,17 +2,17 @@
 [*] change marked possible move for castling
 [*] bug fix: castling should not be possible if King is in check
 [*] bug fix: castling should be possible even if tile beside queen side rook is in check
-[ ] implement click functionality for playing
-[ ] add file and rank numbers
+[*] feature: implement click functionality for playing
+[ ] feature: add file and rank numbers
 [ ] change piece images
 
-[ ] highlight initial and final tile
-[ ] show last played move as highlighted tile
-[ ] add animation for movement
-[ ] add sound effects
+[ ] feature: highlight initial and final tile
+[ ] feature: show last played move as highlighted tile
+[ ] feature: add animation for movement
+[ ] feature: add sound effects
 [ ] change pawn promotion modal
 
-[ ] implement move list
-[ ] add move notations
-[ ] implement save and reset
-[ ] implement timer
+[ ] feature: implement move list
+[ ] feature: add move notations
+[ ] feature: implement save and reset
+[ ] feature: implement timer
