@@ -1,17 +1,18 @@
 import './tile.css';
 
 type TileProps = {
-  number: number;
+  xPos: number;
+  yPos: number;
   image?: string;
   highlight: boolean;
   selected: boolean;
 };
 
-export default function Tile({ number, image, highlight, selected }: TileProps) {
+export default function Tile({ xPos, yPos, image, highlight, selected }: TileProps) {
   const className: string = [
     'tile',
-    number % 2 === 0 && 'black-tile',
-    number % 2 !== 0 && 'white-tile',
+    (xPos + yPos) % 2 === 0 && 'black-tile',
+    (xPos + yPos) % 2 !== 0 && 'white-tile',
     highlight && 'tile-highlight',
     selected && 'tile-selected',
     image && 'chess-piece-tile',
@@ -20,8 +21,8 @@ export default function Tile({ number, image, highlight, selected }: TileProps) 
     .join(' ');
 
   return (
-    <span className={className}>
+    <div className={className}>
       {image && <div style={{ backgroundImage: `url(/assets/images/${image}.png)` }} className="chess-piece" />}
-    </span>
+    </div>
   );
 }

@@ -136,7 +136,7 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
     }
   };
 
-  let board = [];
+  const board = [];
 
   for (let j = VERTICAL_AXIS.length - 1; j >= 0; j--) {
     for (let i = 0; i < HORIZONTAL_AXIS.length; i++) {
@@ -156,7 +156,7 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
       const isTileSelected = currentPiece ? currentPiece.isSamePosition(new Position(i, j)) : false;
 
       board.push(
-        <Tile key={`${i}-${j}`} number={i + j} image={image} highlight={highlight} selected={isTileSelected} />
+        <Tile key={`${i}-${j}`} xPos={i} yPos={j} image={image} highlight={highlight} selected={isTileSelected} />
       );
     }
   }
