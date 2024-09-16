@@ -1,3 +1,5 @@
+import { HORIZONTAL_AXIS, VERTICAL_AXIS } from '@/constants';
+
 import './tile.css';
 
 type TileProps = {
@@ -20,8 +22,13 @@ export default function Tile({ xPos, yPos, image, highlight, selected }: TilePro
     .filter(Boolean)
     .join(' ');
 
+  const rankLabel = VERTICAL_AXIS[yPos];
+  const fileLabel = HORIZONTAL_AXIS[xPos];
+
   return (
     <div className={className}>
+      {xPos === 0 && <span className="rank">{rankLabel}</span>}
+      {yPos === 0 && <span className="file">{fileLabel}</span>}
       {image && <div style={{ backgroundImage: `url(/assets/images/${image}.png)` }} className="chess-piece" />}
     </div>
   );

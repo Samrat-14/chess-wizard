@@ -3,12 +3,28 @@
   justify-content: center;
   align-items: center;
 
+  & span {
+    position: absolute;
+    width: 10vmin;
+    height: 10vmin;
+    z-index: 1;
+    font-size: 2vmin;
+    display: flex;
+    line-height: 1;
+
+    &.file {
+      justify-content: flex-end;
+      align-items: flex-end;
+    }
+  }
+
   & .chess-piece {
     width: 10vmin;
     height: 10vmin;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    z-index: 10;
 
     &:hover {
       cursor: grab;
@@ -21,6 +37,7 @@
 
   &.black-tile {
     background-color: var(--primary-color);
+    color: var(--secondary-color);
 
     &.tile-selected {
       background-color: var(--primary-color-selection);
@@ -29,6 +46,7 @@
 
   &.white-tile {
     background-color: var(--secondary-color);
+    color: var(--primary-color);
 
     &.tile-selected {
       background-color: var(--secondary-color-selection);

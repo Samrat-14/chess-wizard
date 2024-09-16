@@ -4,8 +4,8 @@
 [*] bug fix: castling should be possible even if tile beside queen side rook is in check
 [*] feature: implement click functionality for playing
 [*] feature: highlight selected tile with piece 
+[*] feature: add file and rank numbers
 [ ] feature: highlight hovered tile with piece selected
-[ ] feature: add file and rank numbers
 [ ] change piece images
 
 [ ] feature: highlight initial and final tile
