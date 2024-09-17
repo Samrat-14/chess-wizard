@@ -145,7 +145,8 @@ export default function Referee() {
 
   const restartGame = () => {
     gameOverModalRef.current?.classList.add('hidden');
-    setBoard(initialBoard.clone());
+    setBoard(new Board([], 0));
+    startGameModalRef.current?.classList.remove('hidden');
   };
 
   const startGame = () => {
