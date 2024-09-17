@@ -6,14 +6,17 @@ import Tile from '@/components/tile/Tile';
 
 import { HORIZONTAL_AXIS, VERTICAL_AXIS } from '@/constants';
 import { Piece, Position } from '@/models';
+import { TeamType } from '@/types';
+
 import './chessboard.css';
 
 type ChessboardProps = {
   playMove: (piece: Piece, position: Position) => boolean;
   pieces: Piece[];
+  turn?: TeamType;
 };
 
-const Chessboard = forwardRef(({ playMove, pieces }: ChessboardProps, ref: Ref<HTMLDivElement>) => {
+const Chessboard = forwardRef(({ playMove, pieces, turn }: ChessboardProps, ref: Ref<HTMLDivElement>) => {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
   const [grabPosition, setGrabPosition] = useState<Position>(new Position(-1, -1));
   const [activeSelectedPiece, setActiveSelectedPiece] = useState<HTMLElement | null>(null);
@@ -30,8 +33,12 @@ const Chessboard = forwardRef(({ playMove, pieces }: ChessboardProps, ref: Ref<H
         Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
       );
 
+      // Toggle position coordinates based on turn
+      const xPos = turn && turn === 'b' ? 7 - clickX : clickX;
+      const yPos = turn && turn === 'b' ? 7 - clickY : clickY;
+
       // Check if click start position is same as click end position
-      const isProperClick = grabPosition.isSamePosition(new Position(clickX, clickY));
+      const isProperClick = grabPosition.isSamePosition(new Position(xPos, yPos));
 
       // Check if a piece was selected
       if (activeSelectedPiece) {
@@ -45,11 +52,11 @@ const Chessboard = forwardRef(({ playMove, pieces }: ChessboardProps, ref: Ref<H
         const selectedPiece = pieces.find((p) => p.isSamePosition(selectedPosition));
         if (selectedPiece) {
           // Check if the played move is valid
-          const success = playMove(selectedPiece.clone(), new Position(clickX, clickY));
+          const success = playMove(selectedPiece.clone(), new Position(xPos, yPos));
 
           // If move is invalid, but another piece is properly clicked, select it
           if (!success && element.classList.contains('chess-piece') && isProperClick) {
-            setSelectedPosition(new Position(clickX, clickY));
+            setSelectedPosition(new Position(xPos, yPos));
             setActiveSelectedPiece(element);
 
             return;
@@ -61,7 +68,7 @@ const Chessboard = forwardRef(({ playMove, pieces }: ChessboardProps, ref: Ref<H
       } else {
         // No piece was selected, so if there is a piece & proper click, grab it
         if (element.classList.contains('chess-piece') && isProperClick) {
-          setSelectedPosition(new Position(clickX, clickY));
+          setSelectedPosition(new Position(xPos, yPos));
           setActiveSelectedPiece(element);
         }
       }
@@ -78,7 +85,11 @@ const Chessboard = forwardRef(({ playMove, pieces }: ChessboardProps, ref: Ref<H
         Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
       );
 
-      setGrabPosition(new Position(grabX, grabY));
+      // Toggle position coordinates based on turn
+      const xPos = turn && turn === 'b' ? 7 - grabX : grabX;
+      const yPos = turn && turn === 'b' ? 7 - grabY : grabY;
+
+      setGrabPosition(new Position(xPos, yPos));
 
       const x = e.clientX;
       const y = e.clientY;
@@ -111,28 +122,30 @@ const Chessboard = forwardRef(({ playMove, pieces }: ChessboardProps, ref: Ref<H
 
   const dropPiece = (e: React.MouseEvent) => {
     const chessboard = chessboardRef.current;
+
     if (activePiece && chessboard) {
       // Find (x, y) where the piece is dropped
-      const x = Math.floor((e.clientX - chessboard.offsetLeft) / (chessboard.clientWidth / 8));
-      const y = Math.abs(
+      const dropX = Math.floor((e.clientX - chessboard.offsetLeft) / (chessboard.clientWidth / 8));
+      const dropY = Math.abs(
         Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
       );
+
+      // Toggle position coordinates based on turn
+      const xPos = turn && turn === 'b' ? 7 - dropX : dropX;
+      const yPos = turn && turn === 'b' ? 7 - dropY : dropY;
 
       const currentPiece = pieces.find((p) => p.isSamePosition(grabPosition));
 
       if (currentPiece) {
         // Check if the played move is valid
-        const success = playMove(currentPiece.clone(), new Position(x, y));
+        playMove(currentPiece.clone(), new Position(xPos, yPos));
 
-        // If not success, snap back to place
-        if (!success) {
-          // Resets the piece position
-          activePiece.style.position = 'relative';
-          activePiece.style.zIndex = '10';
-          activePiece.style.removeProperty('left');
-          activePiece.style.removeProperty('top');
-          activePiece.style.removeProperty('translate');
-        }
+        // Resets the piece position tp snap at place
+        activePiece.style.position = 'relative';
+        activePiece.style.zIndex = '10';
+        activePiece.style.removeProperty('left');
+        activePiece.style.removeProperty('top');
+        activePiece.style.removeProperty('translate');
       }
 
       setActivePiece(null);
@@ -143,23 +156,36 @@ const Chessboard = forwardRef(({ playMove, pieces }: ChessboardProps, ref: Ref<H
 
   for (let j = VERTICAL_AXIS.length - 1; j >= 0; j--) {
     for (let i = 0; i < HORIZONTAL_AXIS.length; i++) {
-      const piece = pieces.find((p) => p.isSamePosition(new Position(i, j)));
+      // Toggle position coordinates based on turn
+      const xPos = turn && turn === 'b' ? 7 - i : i;
+      const yPos = turn && turn === 'b' ? 7 - j : j;
+
+      // Find piece at the tile and set it's image
+      const piece = pieces.find((p) => p.isSamePosition(new Position(xPos, yPos)));
       const image = piece ? piece.image : undefined;
 
       // Piece which is currently clicked or grabbed
       const currentPiece =
         activeSelectedPiece || activePiece ? pieces.find((p) => p.isSamePosition(grabPosition)) : undefined;
 
-      // If tile's position is in possible moves array
+      // If tile is in possible moves array, highlight it
       const highlight = currentPiece?.possibleMoves
-        ? currentPiece.possibleMoves.some((p) => p.isSamePosition(new Position(i, j)))
+        ? currentPiece.possibleMoves.some((p) => p.isSamePosition(new Position(xPos, yPos)))
         : false;
 
-      // If tile's piece is selected
-      const isTileSelected = currentPiece ? currentPiece.isSamePosition(new Position(i, j)) : false;
+      // Mark the tile whose piece is selected
+      const isTileSelected = currentPiece ? currentPiece.isSamePosition(new Position(xPos, yPos)) : false;
 
       board.push(
-        <Tile key={`${i}-${j}`} xPos={i} yPos={j} image={image} highlight={highlight} selected={isTileSelected} />
+        <Tile
+          key={`${i}-${j}`}
+          xPos={xPos}
+          yPos={yPos}
+          turn={turn}
+          image={image}
+          highlight={highlight}
+          selected={isTileSelected}
+        />
       );
     }
   }

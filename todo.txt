@@ -1,23 +1,24 @@
 [*] refactor the code
-[*] change marked possible move for castling
+[*] refactor: change marked possible move for castling
+[*] refactor: change piece images
+[*] refactor: change pawn promotion modal
+
 [*] bug fix: castling should not be possible if King is in check
 [*] bug fix: castling should be possible even if tile beside queen side rook is in check
+[ ] bug fix: stalemate should show Draw
+
 [*] feature: implement click functionality for playing
 [*] feature: highlight selected tile with piece 
 [*] feature: add file and rank numbers
-[*] change piece images
-[*] change pawn promotion modal
-[ ] feature: highlight hovered tile with piece selected
-
+[*] feature: rotate side for turns
 [ ] feature: starting UI with option to choose team
-[ ] feature: rotate side for turns
-[ ] bug fix: stalemate should show Draw
-[ ] feature: highlight initial and final tile
+[ ] feature: resign button
 [ ] feature: show last played move as highlighted tile
 [ ] feature: add animation for movement
 [ ] feature: add sound effects
-
 [ ] feature: implement move list
 [ ] feature: add move notations
 [ ] feature: implement save and reset
 [ ] feature: implement timer
+
+[ ] archive: highlight hovered tile with piece selected

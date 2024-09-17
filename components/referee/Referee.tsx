@@ -145,8 +145,6 @@ export default function Referee() {
 
   return (
     <>
-      <p>{board.currentTeam === 'w' ? "WHITE'S TURN" : "BLACK'S TURN"}</p>
-
       {/* Pawn Promotion Modal */}
       <Modal ref={promotionModalRef} type="promotion-modal" hidden>
         <img src={promotionPieceImage(PieceType.KNIGHT)} alt="knight" onClick={() => promotePawn(PieceType.KNIGHT)} />
@@ -156,7 +154,7 @@ export default function Referee() {
       </Modal>
 
       {/* Game Over Modal */}
-      <Modal ref={gameOverModalRef} type="popup-modal">
+      <Modal ref={gameOverModalRef} type="popup-modal" hidden>
         <div className="flex flex-col items-center gap-[2.5vmin]">
           <h2 className="text-[5vmin] uppercase font-bold">
             {board.winningTeam === TeamType.OUR ? 'white' : 'black'} wins!
@@ -167,7 +165,7 @@ export default function Referee() {
         </div>
       </Modal>
 
-      <Chessboard ref={chessboardRef} playMove={playMove} pieces={board.pieces} />
+      <Chessboard ref={chessboardRef} playMove={playMove} pieces={board.pieces} turn={board.currentTeam} />
     </>
   );
 }
