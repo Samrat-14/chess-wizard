@@ -23,7 +23,7 @@ export class Board {
   }
 
   get currentTeam(): TeamType {
-    return this.totalTurns % 2 === 0 ? TeamType.OPPONENT : TeamType.OUR;
+    return this.totalTurns % 2 === 0 ? TeamType.WHITE : TeamType.BLACK;
   }
 
   calculateAllMoves() {
@@ -54,7 +54,7 @@ export class Board {
       return;
 
     // Checkmated! Set the winning team
-    this.winningTeam = this.currentTeam === TeamType.OUR ? TeamType.OPPONENT : TeamType.OUR;
+    this.winningTeam = this.currentTeam === TeamType.WHITE ? TeamType.BLACK : TeamType.WHITE;
   }
 
   checkCurrentTeamMoves() {
@@ -115,7 +115,7 @@ export class Board {
   }
 
   playMove(enPassantMove: boolean, validMove: boolean, playedPiece: Piece, destination: Position): boolean {
-    const pawnDirection = playedPiece.team === TeamType.OUR ? 1 : -1;
+    const pawnDirection = playedPiece.team === TeamType.WHITE ? 1 : -1;
 
     // If the move is Castling, we do this
     if (playedPiece.isKing && Math.abs(destination.x - playedPiece.position.x) === 2) {

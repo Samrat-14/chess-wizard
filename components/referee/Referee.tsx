@@ -20,8 +20,7 @@ export default function Referee() {
     if (!playedPiece.possibleMoves) return false;
 
     // Prevent inactive player from playing
-    if (playedPiece.team === TeamType.OUR && board.totalTurns % 2 !== 1) return false;
-    if (playedPiece.team === TeamType.OPPONENT && board.totalTurns % 2 !== 0) return false;
+    if (playedPiece.team !== board.currentTeam) return false;
 
     let playedMoveIsValid = false;
 
@@ -48,7 +47,7 @@ export default function Referee() {
     });
 
     // For promoting a Pawn
-    const promotionRow = playedPiece.team === TeamType.OUR ? 7 : 0;
+    const promotionRow = playedPiece.team === TeamType.WHITE ? 7 : 0;
 
     if (destination.y === promotionRow && playedPiece.isPawn) {
       promotionModalRef.current?.classList.remove('hidden');
@@ -80,7 +79,7 @@ export default function Referee() {
     type: PieceType,
     team: TeamType
   ): boolean => {
-    const pawnDirection = team === TeamType.OUR ? 1 : -1;
+    const pawnDirection = team === TeamType.WHITE ? 1 : -1;
 
     if (type === PieceType.PAWN) {
       if (
@@ -133,7 +132,7 @@ export default function Referee() {
   };
 
   const promotionPieceImage = (promotionPieceType: PieceType) => {
-    const promotionTeamType = promotionPawn?.team === TeamType.OUR ? 'w' : 'b';
+    const promotionTeamType = promotionPawn?.team === TeamType.WHITE ? 'w' : 'b';
 
     return `assets/images/${promotionPieceType}_${promotionTeamType}.png`;
   };
@@ -157,7 +156,7 @@ export default function Referee() {
       <Modal ref={gameOverModalRef} type="popup-modal" hidden>
         <div className="flex flex-col items-center gap-[2.5vmin]">
           <h2 className="text-[5vmin] uppercase font-bold">
-            {board.winningTeam === TeamType.OUR ? 'white' : 'black'} wins!
+            {board.winningTeam === TeamType.WHITE ? 'white' : 'black'} wins!
           </h2>
           <button className="btn-primary" onClick={restartGame}>
             Play again
@@ -165,7 +164,8 @@ export default function Referee() {
         </div>
       </Modal>
 
-      <Chessboard ref={chessboardRef} playMove={playMove} pieces={board.pieces} turn={board.currentTeam} />
+      {/* <Chessboard ref={chessboardRef} playMove={playMove} pieces={board.pieces} turn={board.currentTeam} /> */}
+      <Chessboard ref={chessboardRef} playMove={playMove} pieces={board.pieces} />
     </>
   );
 }

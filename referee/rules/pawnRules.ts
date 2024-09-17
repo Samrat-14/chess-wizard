@@ -5,8 +5,8 @@ import { isTileOccupied, isTileOccupiedByOpponent } from './generalRules';
 export const getPossiblePawnMoves = (pawn: Piece, boardState: Piece[]): Position[] => {
   const possibleMoves: Position[] = [];
 
-  const specialRow = pawn.team === TeamType.OUR ? 1 : 6;
-  const pawnDirection = pawn.team === TeamType.OUR ? 1 : -1;
+  const specialRow = pawn.team === TeamType.WHITE ? 1 : 6;
+  const pawnDirection = pawn.team === TeamType.WHITE ? 1 : -1;
 
   const normalMove = new Position(pawn.position.x, pawn.position.y + pawnDirection);
   const specialMove = new Position(normalMove.x, normalMove.y + pawnDirection);

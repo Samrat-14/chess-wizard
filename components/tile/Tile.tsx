@@ -27,7 +27,7 @@ export default function Tile({ xPos, yPos, turn, image, highlight, selected }: T
 
   const rankLabel = VERTICAL_AXIS[yPos];
   const fileLabel = HORIZONTAL_AXIS[xPos];
-  const firstRowCol = turn && turn === 'b' ? 7 : 0;
+  const firstRowCol = turn && turn === TeamType.BLACK ? 7 : 0;
 
   return (
     <div className={className}>

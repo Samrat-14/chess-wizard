@@ -34,8 +34,8 @@ const Chessboard = forwardRef(({ playMove, pieces, turn }: ChessboardProps, ref:
       );
 
       // Toggle position coordinates based on turn
-      const xPos = turn && turn === 'b' ? 7 - clickX : clickX;
-      const yPos = turn && turn === 'b' ? 7 - clickY : clickY;
+      const xPos = turn && turn === TeamType.BLACK ? 7 - clickX : clickX;
+      const yPos = turn && turn === TeamType.BLACK ? 7 - clickY : clickY;
 
       // Check if click start position is same as click end position
       const isProperClick = grabPosition.isSamePosition(new Position(xPos, yPos));
@@ -86,8 +86,8 @@ const Chessboard = forwardRef(({ playMove, pieces, turn }: ChessboardProps, ref:
       );
 
       // Toggle position coordinates based on turn
-      const xPos = turn && turn === 'b' ? 7 - grabX : grabX;
-      const yPos = turn && turn === 'b' ? 7 - grabY : grabY;
+      const xPos = turn && turn === TeamType.BLACK ? 7 - grabX : grabX;
+      const yPos = turn && turn === TeamType.BLACK ? 7 - grabY : grabY;
 
       setGrabPosition(new Position(xPos, yPos));
 
@@ -131,8 +131,8 @@ const Chessboard = forwardRef(({ playMove, pieces, turn }: ChessboardProps, ref:
       );
 
       // Toggle position coordinates based on turn
-      const xPos = turn && turn === 'b' ? 7 - dropX : dropX;
-      const yPos = turn && turn === 'b' ? 7 - dropY : dropY;
+      const xPos = turn && turn === TeamType.BLACK ? 7 - dropX : dropX;
+      const yPos = turn && turn === TeamType.BLACK ? 7 - dropY : dropY;
 
       const currentPiece = pieces.find((p) => p.isSamePosition(grabPosition));
 
@@ -157,8 +157,8 @@ const Chessboard = forwardRef(({ playMove, pieces, turn }: ChessboardProps, ref:
   for (let j = VERTICAL_AXIS.length - 1; j >= 0; j--) {
     for (let i = 0; i < HORIZONTAL_AXIS.length; i++) {
       // Toggle position coordinates based on turn
-      const xPos = turn && turn === 'b' ? 7 - i : i;
-      const yPos = turn && turn === 'b' ? 7 - j : j;
+      const xPos = turn && turn === TeamType.BLACK ? 7 - i : i;
+      const yPos = turn && turn === TeamType.BLACK ? 7 - j : j;
 
       // Find piece at the tile and set it's image
       const piece = pieces.find((p) => p.isSamePosition(new Position(xPos, yPos)));
