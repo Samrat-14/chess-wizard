@@ -16,7 +16,7 @@ type ChessboardProps = {
   turn?: TeamType;
 };
 
-const Chessboard = forwardRef(({ playMove, pieces, turn }: ChessboardProps, ref: Ref<HTMLDivElement>) => {
+export default forwardRef(function Chessboard({ playMove, pieces, turn }: ChessboardProps, ref: Ref<HTMLDivElement>) {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
   const [grabPosition, setGrabPosition] = useState<Position>(new Position(-1, -1));
   const [activeSelectedPiece, setActiveSelectedPiece] = useState<HTMLElement | null>(null);
@@ -205,5 +205,3 @@ const Chessboard = forwardRef(({ playMove, pieces, turn }: ChessboardProps, ref:
     </>
   );
 });
-
-export default Chessboard;

@@ -5,12 +5,14 @@
 :root {
   --primary-color: #779556;
   --primary-color-dark: #6c884f;
-  --primary-color-darker: #4c7026;
+  --primary-color-darker: #40621c;
   --primary-color-selection: #b9ca43;
   --secondary-color: #ebecd0;
   --secondary-color-selection: #f5f682;
   --tertiary-color: #d9dab5;
   --bg-color: #202020;
+  --bg-color-light: #272727;
+  --bg-color-lighter: #2e2e2e;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -41,10 +43,10 @@ body {
 }
 
 .btn-primary {
+  display: block;
   background-color: var(--primary-color);
   color: #fff;
-  padding: 2vmin 10vmin;
-  font-size: 3vmin;
+  padding: 0.75rem;
   font-weight: bold;
   border: none;
   border-radius: 0.5rem;
@@ -56,5 +58,45 @@ body {
   }
   &:active {
     scale: 0.98;
+  }
+}
+
+.toggle-checkbox {
+  position: relative;
+  display: inline-block;
+  width: 2.5rem;
+  height: 1.25rem;
+
+  & input {
+    display: none;
+
+    &:checked + span {
+      background-color: var(--primary-color-darker);
+    }
+
+    &:checked + span::before {
+      background-color: var(--primary-color);
+      translate: 1rem;
+    }
+  }
+
+  & span {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #707070;
+    transition: 0.3s;
+    border-radius: 1.5rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 1.5rem;
+      height: 1.5rem;
+      top: -0.125rem;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
   }
 }

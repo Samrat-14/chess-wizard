@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Chessboard from '@/components/chessboard/Chessboard';
 import Modal from '@/components/modal/Modal';
@@ -8,13 +8,19 @@ import Modal from '@/components/modal/Modal';
 import { PieceType, TeamType } from '@/types';
 import { initialBoard } from '@/constants';
 import { Board, Pawn, Piece, Position } from '@/models';
+import { Shuffle } from 'lucide-react';
 
 export default function Referee() {
-  const [board, setBoard] = useState<Board>(initialBoard.clone());
+  const [board, setBoard] = useState<Board>(new Board([], 0));
   const [promotionPawn, setPromotionPawn] = useState<Piece>();
   const chessboardRef = useRef<HTMLDivElement>(null);
   const promotionModalRef = useRef<HTMLDivElement>(null);
   const gameOverModalRef = useRef<HTMLDivElement>(null);
+  const startGameModalRef = useRef<HTMLDivElement>(null);
+
+  // Game settings
+  const [switchTeam, setSwitchTeam] = useState(true);
+  const [boardRotates, setBoardRotates] = useState(false);
 
   const playMove = (playedPiece: Piece, destination: Position): boolean => {
     if (!playedPiece.possibleMoves) return false;
@@ -142,6 +148,11 @@ export default function Referee() {
     setBoard(initialBoard.clone());
   };
 
+  const startGame = () => {
+    startGameModalRef.current?.classList.add('hidden');
+    setBoard(initialBoard.clone());
+  };
+
   return (
     <>
       {/* Pawn Promotion Modal */}
@@ -154,18 +165,49 @@ export default function Referee() {
 
       {/* Game Over Modal */}
       <Modal ref={gameOverModalRef} type="popup-modal" hidden>
-        <div className="flex flex-col items-center gap-[2.5vmin]">
-          <h2 className="text-[5vmin] uppercase font-bold">
-            {board.winningTeam === TeamType.WHITE ? 'white' : 'black'} wins!
-          </h2>
+        <div className="modal-body">
+          <h2 className="uppercase">{board.winningTeam === TeamType.WHITE ? 'white' : 'black'} wins!</h2>
           <button className="btn-primary" onClick={restartGame}>
             Play again
           </button>
         </div>
       </Modal>
 
-      {/* <Chessboard ref={chessboardRef} playMove={playMove} pieces={board.pieces} turn={board.currentTeam} /> */}
-      <Chessboard ref={chessboardRef} playMove={playMove} pieces={board.pieces} />
+      {/* Start Game Modal */}
+      <Modal ref={startGameModalRef} type="popup-modal">
+        <div className="modal-body">
+          <h2>Pass and Play</h2>
+          <p>Play with a friend offline</p>
+          <h4>
+            <span>White</span>
+            <span className="font-bold">{switchTeam ? 'You' : 'Opponent'}</span>
+          </h4>
+          <span id="toggle-team" onClick={() => setSwitchTeam((prev) => !prev)}>
+            <Shuffle size={20} color="#ffffff" strokeWidth={2.5} />
+          </span>
+          <h4>
+            <span>Black</span>
+            <span className="font-bold">{switchTeam ? 'Opponent' : 'You'}</span>
+          </h4>
+          <h4>
+            <span>Board rotates</span>
+            <label className="toggle-checkbox">
+              <input type="checkbox" name="board-rotate" onChange={(e) => setBoardRotates(e.target.checked)} />
+              <span />
+            </label>
+          </h4>
+          <button className="btn-primary" onClick={startGame}>
+            Start game
+          </button>
+        </div>
+      </Modal>
+
+      <Chessboard
+        ref={chessboardRef}
+        playMove={playMove}
+        pieces={board.pieces}
+        turn={boardRotates ? board.currentTeam : undefined}
+      />
     </>
   );
 }
