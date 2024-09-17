@@ -11,7 +11,7 @@
 [*] feature: highlight selected tile with piece 
 [*] feature: add file and rank numbers
 [*] feature: rotate side for turns
-[ ] feature: starting UI with option to choose team
+[*] feature: starting UI with option to choose team
 [ ] feature: resign button
 [ ] feature: show last played move as highlighted tile
 [ ] feature: add animation for movement
