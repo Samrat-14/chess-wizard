@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { forwardRef, Ref, RefObject, useState } from 'react';
 
 import Tile from '@/components/tile/Tile';
 
@@ -13,12 +13,12 @@ type ChessboardProps = {
   pieces: Piece[];
 };
 
-export default function Chessboard({ playMove, pieces }: ChessboardProps) {
+const Chessboard = forwardRef(({ playMove, pieces }: ChessboardProps, ref: Ref<HTMLDivElement>) => {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
   const [grabPosition, setGrabPosition] = useState<Position>(new Position(-1, -1));
   const [activeSelectedPiece, setActiveSelectedPiece] = useState<HTMLElement | null>(null);
   const [selectedPosition, setSelectedPosition] = useState<Position>(new Position(-1, -1));
-  const chessboardRef = useRef<HTMLDivElement>(null);
+  const chessboardRef = ref as RefObject<HTMLDivElement>;
 
   const clickPiece = (e: React.MouseEvent) => {
     const element = e.target as HTMLElement;
@@ -178,4 +178,6 @@ export default function Chessboard({ playMove, pieces }: ChessboardProps) {
       </div>
     </>
   );
-}
+});
+
+export default Chessboard;

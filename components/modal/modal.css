@@ -1,0 +1,43 @@
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.modal-overlay > .promotion-modal {
+  position: absolute;
+  padding: 0.8vmin 0.8vmin;
+  background-color: #fff;
+  box-shadow: 0 0 1rem 0 var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1.6vmin;
+
+  & img {
+    width: 10vmin;
+    height: 10vmin;
+    border-radius: 0.25rem;
+
+    &:hover {
+      cursor: pointer;
+      outline: 2px solid var(--primary-color);
+    }
+  }
+}
+
+.modal-overlay > .popup-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: calc(100vmin - 5%);
+  height: 36vmin;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}

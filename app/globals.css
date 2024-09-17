@@ -5,6 +5,7 @@
 :root {
   --primary-color: #779556;
   --primary-color-dark: #6c884f;
+  --primary-color-darker: #4c7026;
   --primary-color-selection: #b9ca43;
   --secondary-color: #ebecd0;
   --secondary-color-selection: #f5f682;
@@ -43,9 +44,11 @@ body {
   background-color: var(--primary-color);
   color: #fff;
   padding: 2vmin 10vmin;
-  font-size: 1rem;
+  font-size: 3vmin;
+  font-weight: bold;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.25rem 0 0 var(--primary-color-darker);
 
   &:hover {
     cursor: pointer;
@@ -53,40 +56,5 @@ body {
   }
   &:active {
     scale: 0.98;
-  }
-}
-
-.modal {
-  position: absolute;
-  inset: 0;
-
-  &.hidden {
-    display: none;
-  }
-
-  & .modal-body {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
-    width: calc(100vmin - 5%);
-    height: 36vmin;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-
-    & img {
-      width: 12vmin;
-      height: 12vmin;
-      border-radius: 50%;
-      padding: 4vmin;
-      box-sizing: content-box;
-
-      &:hover {
-        cursor: pointer;
-        background-color: rgba(255, 255, 255, 0.25);
-      }
-    }
   }
 }

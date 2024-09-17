@@ -6,13 +6,16 @@
 [*] feature: highlight selected tile with piece 
 [*] feature: add file and rank numbers
 [*] change piece images
+[*] change pawn promotion modal
 [ ] feature: highlight hovered tile with piece selected
 
+[ ] feature: starting UI with option to choose team
+[ ] feature: rotate side for turns
+[ ] bug fix: stalemate should show Draw
 [ ] feature: highlight initial and final tile
 [ ] feature: show last played move as highlighted tile
 [ ] feature: add animation for movement
 [ ] feature: add sound effects
-[ ] change pawn promotion modal
 
 [ ] feature: implement move list
 [ ] feature: add move notations
