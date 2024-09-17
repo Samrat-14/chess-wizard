@@ -5,8 +5,8 @@
 [*] feature: implement click functionality for playing
 [*] feature: highlight selected tile with piece 
 [*] feature: add file and rank numbers
+[*] change piece images
 [ ] feature: highlight hovered tile with piece selected
-[ ] change piece images
 
 [ ] feature: highlight initial and final tile
 [ ] feature: show last played move as highlighted tile
