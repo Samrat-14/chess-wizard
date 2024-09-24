@@ -164,6 +164,17 @@ export default function Referee() {
     setBoard(initialBoard.clone());
   };
 
+  const resignGame = () => {
+    setBoard(() => {
+      const clonedBoard = board.clone();
+
+      clonedBoard.winningTeam = clonedBoard.currentTeam === TeamType.WHITE ? TeamType.BLACK : TeamType.WHITE;
+
+      return clonedBoard;
+    });
+    gameOverModalRef.current?.classList.remove('hidden');
+  };
+
   return (
     <>
       {/* Pawn Promotion Modal */}
@@ -223,6 +234,12 @@ export default function Referee() {
         />
         <Playertag playerName={boardRotates && board.currentTeam === TeamType.BLACK ? playerBlack : playerWhite} />
       </main>
+
+      {board.pieces.length > 0 && (
+        <button className="btn-primary absolute top-1 right-1" onClick={resignGame}>
+          Resign
+        </button>
+      )}
     </>
   );
 }
