@@ -28,8 +28,8 @@ export default function Referee() {
   const [playerBlack, setPlayerBlack] = useState('Opponent');
 
   const switchPlayers = () => {
-    setPlayerWhite('Opponent');
-    setPlayerBlack('You');
+    setPlayerWhite((prev) => (prev === 'You' ? 'Opponent' : 'You'));
+    setPlayerBlack((prev) => (prev === 'Opponent' ? 'You' : 'Opponent'));
   };
 
   const playMove = (playedPiece: Piece, destination: Position): boolean => {

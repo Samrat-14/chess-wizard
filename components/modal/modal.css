@@ -4,6 +4,7 @@
   z-index: 100;
   background-color: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(1px);
+  user-select: none;
 
   &.hidden {
     display: none;
