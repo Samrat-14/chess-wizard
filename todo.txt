@@ -14,9 +14,9 @@
 [*] feature: starting UI with option to choose team
 [*] feature: show names
 [*] feature: resign button
-[ ] feature: show last played move as highlighted tile
-[ ] feature: game state should be saved in local storage
+[*] feature: show last played move as highlighted tile
 [ ] feature: implement timer
+[ ] feature: game state should be saved in local storage
 
 [ ] feature: add animation for movement
 [ ] feature: add sound effects

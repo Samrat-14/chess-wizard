@@ -9,7 +9,7 @@ import Playertag from '@/components/playertag/Playertag';
 
 import { PieceType, TeamType } from '@/types';
 import { initialBoard } from '@/constants';
-import { Board, Pawn, Piece, Position } from '@/models';
+import { Board, Move, Pawn, Piece, Position } from '@/models';
 
 import './referee.css';
 
@@ -50,6 +50,7 @@ export default function Referee() {
       const clonedBoard = board.clone();
 
       clonedBoard.totalTurns += 1;
+      clonedBoard.lastMove = new Move(playedPiece.position, destination);
 
       // Playing the move
       playedMoveIsValid = clonedBoard.playMove(enPassantMove, validMove, playedPiece, destination);
@@ -231,6 +232,7 @@ export default function Referee() {
           playMove={playMove}
           pieces={board.pieces}
           turn={boardRotates ? board.currentTeam : undefined}
+          lastMove={board.lastMove}
         />
         <Playertag playerName={boardRotates && board.currentTeam === TeamType.BLACK ? playerBlack : playerWhite} />
       </main>

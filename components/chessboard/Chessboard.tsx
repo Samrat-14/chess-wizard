@@ -5,7 +5,7 @@ import { forwardRef, Ref, RefObject, useState } from 'react';
 import Tile from '@/components/tile/Tile';
 
 import { HORIZONTAL_AXIS, VERTICAL_AXIS } from '@/constants';
-import { Piece, Position } from '@/models';
+import { Move, Piece, Position } from '@/models';
 import { TeamType } from '@/types';
 
 import './chessboard.css';
@@ -14,9 +14,13 @@ type ChessboardProps = {
   playMove: (piece: Piece, position: Position) => boolean;
   pieces: Piece[];
   turn?: TeamType;
+  lastMove?: Move;
 };
 
-export default forwardRef(function Chessboard({ playMove, pieces, turn }: ChessboardProps, ref: Ref<HTMLDivElement>) {
+export default forwardRef(function Chessboard(
+  { playMove, pieces, turn, lastMove }: ChessboardProps,
+  ref: Ref<HTMLDivElement>
+) {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
   const [grabPosition, setGrabPosition] = useState<Position>(new Position(-1, -1));
   const [activeSelectedPiece, setActiveSelectedPiece] = useState<HTMLElement | null>(null);
@@ -168,13 +172,16 @@ export default forwardRef(function Chessboard({ playMove, pieces, turn }: Chessb
       const currentPiece =
         activeSelectedPiece || activePiece ? pieces.find((p) => p.isSamePosition(grabPosition)) : undefined;
 
-      // If tile is in possible moves array, highlight it
-      const highlight = currentPiece?.possibleMoves
+      // If tile is in possible moves array, mark it
+      const isTileInPossibleMoves = currentPiece?.possibleMoves
         ? currentPiece.possibleMoves.some((p) => p.isSamePosition(new Position(xPos, yPos)))
         : false;
 
-      // Mark the tile whose piece is selected
+      // If tile is selected, highlight it
       const isTileSelected = currentPiece ? currentPiece.isSamePosition(new Position(xPos, yPos)) : false;
+
+      // If tile is in last move, highlight it
+      const isTileInLastMove = lastMove ? lastMove.includesPosition(new Position(xPos, yPos)) : false;
 
       board.push(
         <Tile
@@ -183,8 +190,8 @@ export default forwardRef(function Chessboard({ playMove, pieces, turn }: Chessb
           yPos={yPos}
           turn={turn}
           image={image}
-          highlight={highlight}
-          selected={isTileSelected}
+          marked={isTileInPossibleMoves}
+          highlighted={isTileSelected || isTileInLastMove}
         />
       );
     }

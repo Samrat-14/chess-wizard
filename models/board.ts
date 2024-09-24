@@ -8,18 +8,18 @@ import {
   getPossibleRookMoves,
 } from '@/referee/rules';
 import { PieceType, TeamType } from '@/types';
-import { Pawn } from './pawn';
-import { Piece } from './piece';
-import { Position } from './position';
+import { Pawn, Piece, Position, Move } from '@/models';
 
 export class Board {
   pieces: Piece[];
   totalTurns: number;
   winningTeam?: TeamType;
+  lastMove?: Move;
 
-  constructor(pieces: Piece[], totalTurns: number) {
+  constructor(pieces: Piece[], totalTurns: number, lastMove?: Move) {
     this.pieces = pieces;
     this.totalTurns = totalTurns;
+    this.lastMove = lastMove;
   }
 
   get currentTeam(): TeamType {
@@ -207,7 +207,8 @@ export class Board {
   clone(): Board {
     return new Board(
       this.pieces.map((p) => p.clone()),
-      this.totalTurns
+      this.totalTurns,
+      this.lastMove?.clone()
     );
   }
 }

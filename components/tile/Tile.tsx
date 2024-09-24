@@ -9,17 +9,17 @@ type TileProps = {
   yPos: number;
   turn?: TeamType;
   image?: string;
-  highlight: boolean;
-  selected: boolean;
+  marked: boolean;
+  highlighted: boolean;
 };
 
-export default function Tile({ xPos, yPos, turn, image, highlight, selected }: TileProps) {
+export default function Tile({ xPos, yPos, turn, image, marked, highlighted }: TileProps) {
   const className: string = [
     'tile',
     (xPos + yPos) % 2 === 0 && 'black-tile',
     (xPos + yPos) % 2 !== 0 && 'white-tile',
-    highlight && 'tile-highlight',
-    selected && 'tile-selected',
+    marked && 'tile-mark',
+    highlighted && 'tile-highlight',
     image && 'chess-piece-tile',
   ]
     .filter(Boolean)

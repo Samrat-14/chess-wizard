@@ -42,7 +42,7 @@
     background-color: var(--primary-color);
     color: var(--secondary-color);
 
-    &.tile-selected {
+    &.tile-highlight {
       background-color: var(--primary-color-selection);
     }
   }
@@ -51,12 +51,12 @@
     background-color: var(--secondary-color);
     color: var(--primary-color);
 
-    &.tile-selected {
+    &.tile-highlight {
       background-color: var(--secondary-color-selection);
     }
   }
 
-  &.tile-highlight:not(.chess-piece-tile)::before {
+  &.tile-mark:not(.chess-piece-tile)::before {
     content: '';
     position: absolute;
     width: calc(var(--_tile-size) / 2.5);
@@ -65,7 +65,7 @@
     border-radius: 50%;
   }
 
-  &.tile-highlight.chess-piece-tile::before {
+  &.tile-mark.chess-piece-tile::before {
     content: '';
     position: absolute;
     width: var(--_tile-size);
@@ -81,7 +81,7 @@
       font-size: 0.75rem;
     }
 
-    &.tile-highlight.chess-piece-tile::before {
+    &.tile-mark.chess-piece-tile::before {
       border: 0.25rem solid rgba(0, 0, 0, 0.2);
     }
   }

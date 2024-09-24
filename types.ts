@@ -1,3 +1,5 @@
+import { Position } from './models';
+
 export enum PieceType {
   PAWN = 'pawn',
   BISHOP = 'bishop',

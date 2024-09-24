@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { Poppins } from 'next/font/google';
+import { Roboto_Slab } from 'next/font/google';
 
 import './globals.css';
 
-const poppins = Poppins({
+const robotoSlab = Roboto_Slab({
   weight: ['400', '600', '700', '800'],
-  variable: '--font-poppins',
+  variable: '--font-roboto-slab',
   subsets: ['latin'],
   display: 'swap',
 });
@@ -27,7 +27,7 @@ export default function RootLayout({
       <head>
         <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
       </head>
-      <body className={`${poppins.variable} antialiased`}>{children}</body>
+      <body className={`${robotoSlab.variable} antialiased`}>{children}</body>
     </html>
   );
 }
