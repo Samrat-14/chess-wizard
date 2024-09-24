@@ -1,14 +1,17 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { Shuffle } from 'lucide-react';
 
 import Chessboard from '@/components/chessboard/Chessboard';
 import Modal from '@/components/modal/Modal';
+import Playertag from '@/components/playertag/Playertag';
 
 import { PieceType, TeamType } from '@/types';
 import { initialBoard } from '@/constants';
 import { Board, Pawn, Piece, Position } from '@/models';
-import { Shuffle } from 'lucide-react';
+
+import './referee.css';
 
 export default function Referee() {
   const [board, setBoard] = useState<Board>(new Board([], 0));
@@ -19,8 +22,15 @@ export default function Referee() {
   const startGameModalRef = useRef<HTMLDivElement>(null);
 
   // Game settings
-  const [switchTeam, setSwitchTeam] = useState(true);
   const [boardRotates, setBoardRotates] = useState(false);
+
+  const [playerWhite, setPlayerWhite] = useState('You');
+  const [playerBlack, setPlayerBlack] = useState('Opponent');
+
+  const switchPlayers = () => {
+    setPlayerWhite('Opponent');
+    setPlayerBlack('You');
+  };
 
   const playMove = (playedPiece: Piece, destination: Position): boolean => {
     if (!playedPiece.possibleMoves) return false;
@@ -181,14 +191,14 @@ export default function Referee() {
           <p>Play with a friend offline</p>
           <h4>
             <span>White</span>
-            <span className="font-bold">{switchTeam ? 'You' : 'Opponent'}</span>
+            <span className="font-bold">{playerWhite}</span>
           </h4>
-          <span id="toggle-team" onClick={() => setSwitchTeam((prev) => !prev)}>
+          <span id="toggle-team" onClick={switchPlayers}>
             <Shuffle size={20} color="#ffffff" strokeWidth={2.5} />
           </span>
           <h4>
             <span>Black</span>
-            <span className="font-bold">{switchTeam ? 'Opponent' : 'You'}</span>
+            <span className="font-bold">{playerBlack}</span>
           </h4>
           <h4>
             <span>Board rotates</span>
@@ -203,12 +213,16 @@ export default function Referee() {
         </div>
       </Modal>
 
-      <Chessboard
-        ref={chessboardRef}
-        playMove={playMove}
-        pieces={board.pieces}
-        turn={boardRotates ? board.currentTeam : undefined}
-      />
+      <main id="playground">
+        <Playertag playerName={boardRotates && board.currentTeam === TeamType.BLACK ? playerWhite : playerBlack} />
+        <Chessboard
+          ref={chessboardRef}
+          playMove={playMove}
+          pieces={board.pieces}
+          turn={boardRotates ? board.currentTeam : undefined}
+        />
+        <Playertag playerName={boardRotates && board.currentTeam === TeamType.BLACK ? playerBlack : playerWhite} />
+      </main>
     </>
   );
 }

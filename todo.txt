@@ -12,13 +12,15 @@
 [*] feature: add file and rank numbers
 [*] feature: rotate side for turns
 [*] feature: starting UI with option to choose team
+[*] feature: show names
 [ ] feature: resign button
 [ ] feature: show last played move as highlighted tile
+[ ] feature: game state should be saved in local storage
+[ ] feature: implement timer
+
 [ ] feature: add animation for movement
 [ ] feature: add sound effects
 [ ] feature: implement move list
 [ ] feature: add move notations
-[ ] feature: implement save and reset
-[ ] feature: implement timer
 
 [ ] archive: highlight hovered tile with piece selected

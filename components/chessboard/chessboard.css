@@ -1,6 +1,8 @@
 #chessboard {
-  width: calc(100vmin - 2%);
-  aspect-ratio: 1;
+  --_board-size: calc(100vmin - 0.5rem);
+
+  width: var(--_board-size);
+  height: var(--_board-size);
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
