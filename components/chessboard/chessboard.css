@@ -1,6 +1,4 @@
 #chessboard {
-  --_board-size: calc(100vmin - 0.5rem);
-
   width: var(--_board-size);
   height: var(--_board-size);
   display: grid;

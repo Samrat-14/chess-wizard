@@ -1,11 +1,16 @@
 #playground {
+  --_player-icon-size: 3rem;
+  --_board-size: calc(100vmin - 2 * var(--_player-icon-size) - 0.5rem);
+
   height: 100%;
   padding: 0.25rem;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   gap: 0.5rem;
 
   @media screen and (max-width: 480px) {
-    flex-direction: column;
+    --_board-size: calc(100vmin - 0.5rem);
   }
 }
