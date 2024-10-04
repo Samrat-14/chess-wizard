@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chess Wizard
+
+Chess Wizard,built using Next.js and TypeScript, is designed to provide a seamless and customizable chess experience. What sets this application apart is that all chess rules, movements, and gameplay logic have been meticulously developed from scratch, without relying on any third-party libraries for the game's core functionality. This unique approach ensures complete control over every aspect of gameplay and offers an unparalleled chess experience.
+
+![ChessWizard_screenshot](preview.png)
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#view-demo">View Demo</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
+
+### Built With
+
+- [React](https://reactjs.org/)
+- [NextJs](https://nextjs.org/)
+- [Tailwind](https://tailwindcss.com/)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Install [Nodejs](https://nodejs.org/en/) from the official site.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+_Follow the following steps to install and setup the virtual environment._
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Clone the repo
+   ```sh
+   git clone https://github.com/Samrat-14/chess-wizard.git
+   ```
+2. Once inside the cloned repo, get started with installing the node modules.
+   ```sh
+   npm install
+   ```
+3. Start the server for frontend.
+   ```sh
+   npm run dev
+   ```
+4. After the installments are over and the server is running, you can get started with the project.
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- **Custom Chess Engine:** All chess rules, including piece movements, castling, en passant, and pawn promotion, have been written from scratch, adhering to official FIDE standards.
+- **Turn-based Logic:** Includes comprehensive handling of turns, checking for checkmate, stalemate, and draw conditions.
+- **Move Validation:** Ensures valid movements for each piece, preventing illegal moves and offering dynamic feedback for missteps.
+- **Responsive Design:** Optimized for desktop and mobile devices, ensuring the best experience across screen sizes.
+- **Performance Optimized:** Written in TypeScript with efficient algorithms for move validation and game state management, ensuring high performance even for complex endgames.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+I love contributions, so please feel free to fix bugs, improve things, provide documentation.
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
 
-## Deploy on Vercel
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+<!-- LICENSE -->
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## View Demo
+
+Live Demo: [https://samrat-chess-wizard.vercel.app/](https://samrat-chess-wizard.vercel.app)
+
+## Contact
+
+Your Name - [Samrat Sadhu](https://samrat-sadhu-portfolio.vercel.app/) - ss2414@ece.jgec.ac.in
