@@ -4,6 +4,7 @@ import { PieceType, TeamType } from './types';
 export const VERTICAL_AXIS = ['1', '2', '3', '4', '5', '6', '7', '8'];
 export const HORIZONTAL_AXIS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
+// Initial BoardState
 export const initialBoard = new Board(
   [
     // RANK - 8
@@ -48,5 +49,26 @@ export const initialBoard = new Board(
   ],
   0
 );
-
 initialBoard.calculateAllMoves();
+
+// People photo list
+export const USER_PHOTOS = [
+  'f_blue',
+  'f_green',
+  'f_grey',
+  'f_orange',
+  'f_orange2',
+  'f_pink',
+  'f_pink2',
+  'f_purple',
+  'f_purple2',
+  'f_yellow',
+  'm_blue',
+  'm_cyan',
+  'm_cyan2',
+  'm_green',
+  'm_grey',
+  'm_teal',
+  'm_teal2',
+  'm_yellow',
+];

@@ -15,7 +15,7 @@
 [*] feature: show names
 [*] feature: resign button
 [*] feature: show last played move as highlighted tile
-[ ] feature: implement timer
+[*] feature: random user photo
 [ ] feature: game state should be saved in local storage
 
 [ ] feature: add animation for movement
@@ -24,3 +24,4 @@
 [ ] feature: add move notations
 
 [ ] archive: highlight hovered tile with piece selected
+[ ] archive: implement timer
