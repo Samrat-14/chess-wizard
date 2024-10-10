@@ -3,15 +3,15 @@
 import { useRef, useState } from 'react';
 import { Shuffle } from 'lucide-react';
 
-import Chessboard from '@/components/chessboard/Chessboard';
-import Modal from '@/components/modal/Modal';
-import Playertag from '@/components/playertag/Playertag';
+import Chessboard from '@/components/Chessboard';
+import Playertag from '@/components/Playertag';
+import Modal from '@/components/ui/Modal';
 
 import { PieceType, TeamType } from '@/types';
 import { initialBoard } from '@/constants';
 import { Board, Move, Pawn, Piece, Position } from '@/models';
 
-import './referee.css';
+import '@/styles/referee.css';
 
 export default function Referee() {
   const [board, setBoard] = useState<Board>(new Board([], 0));

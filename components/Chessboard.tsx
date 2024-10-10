@@ -2,13 +2,13 @@
 
 import { forwardRef, Ref, RefObject, useState } from 'react';
 
-import Tile from '@/components/tile/Tile';
+import Tile from '@/components/Tile';
 
 import { HORIZONTAL_AXIS, VERTICAL_AXIS } from '@/constants';
 import { Move, Piece, Position } from '@/models';
 import { TeamType } from '@/types';
 
-import './chessboard.css';
+import '@/styles/chessboard.css';
 
 type ChessboardProps = {
   playMove: (piece: Piece, position: Position) => boolean;

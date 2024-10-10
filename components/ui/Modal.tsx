@@ -1,6 +1,6 @@
 import { forwardRef, ReactNode, Ref } from 'react';
 
-import './modal.css';
+import '@/styles/modal.css';
 
 type ModalProps = {
   type: 'popup-modal' | 'promotion-modal';

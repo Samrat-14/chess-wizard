@@ -1,4 +1,4 @@
-import Referee from '@/components/referee/Referee';
+import Referee from '@/components/Referee';
 
 export default function Home() {
   return (

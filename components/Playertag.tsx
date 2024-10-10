@@ -1,7 +1,7 @@
 import useRandom from '@/hooks/useRandom';
 import { USER_PHOTOS } from '@/constants';
 
-import './playertag.css';
+import '@/styles/playertag.css';
 
 type PlayertagProps = {
   playerName: string;

@@ -2,6 +2,7 @@
 [*] refactor: change marked possible move for castling
 [*] refactor: change piece images
 [*] refactor: change pawn promotion modal
+[*] refactor: move css files to styles folder
 
 [*] bug fix: castling should not be possible if King is in check
 [*] bug fix: castling should be possible even if tile beside queen side rook is in check
@@ -17,7 +18,6 @@
 [*] feature: show last played move as highlighted tile
 [*] feature: random user photo
 [ ] feature: game state should be saved in local storage
-
 [ ] feature: add animation for movement
 [ ] feature: add sound effects
 [ ] feature: implement move list

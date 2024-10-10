@@ -2,7 +2,7 @@ import { HORIZONTAL_AXIS, VERTICAL_AXIS } from '@/constants';
 
 import { TeamType } from '@/types';
 
-import './tile.css';
+import '@/styles/tile.css';
 
 type TileProps = {
   xPos: number;
