@@ -49,11 +49,8 @@ export default function Referee() {
     setBoard(() => {
       const clonedBoard = board.clone();
 
-      clonedBoard.totalTurns += 1;
-      clonedBoard.lastMove = new Move(playedPiece.position, destination);
-
-      // Playing the move
-      playedMoveIsValid = clonedBoard.playMove(enPassantMove, validMove, playedPiece, destination);
+      // Move is valid, so play the move
+      playedMoveIsValid = clonedBoard.playMove(enPassantMove, playedPiece, destination);
 
       // Check if player won after each played move
       if (clonedBoard.winningTeam) {
@@ -162,13 +159,16 @@ export default function Referee() {
 
   const startGame = () => {
     startGameModalRef.current?.classList.add('hidden');
-    setBoard(initialBoard.clone());
+    setBoard(() => {
+      initialBoard.calculateAllMoves();
+
+      return initialBoard;
+    });
   };
 
   const resignGame = () => {
     setBoard(() => {
       const clonedBoard = board.clone();
-
       clonedBoard.winningTeam = clonedBoard.currentTeam === TeamType.WHITE ? TeamType.BLACK : TeamType.WHITE;
 
       return clonedBoard;
@@ -232,7 +232,7 @@ export default function Referee() {
           playMove={playMove}
           pieces={board.pieces}
           turn={boardRotates ? board.currentTeam : undefined}
-          lastMove={board.lastMove}
+          lastMovePlayed={board.lastMove}
         />
         <Playertag playerName={boardRotates && board.currentTeam === TeamType.BLACK ? playerBlack : playerWhite} />
       </main>

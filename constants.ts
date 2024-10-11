@@ -49,7 +49,6 @@ export const initialBoard = new Board(
   ],
   0
 );
-initialBoard.calculateAllMoves();
 
 // People photo list
 export const USER_PHOTOS = [

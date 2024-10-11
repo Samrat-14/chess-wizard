@@ -1,4 +1,4 @@
-import { Position } from './models';
+import { Board } from './models';
 
 export enum PieceType {
   PAWN = 'pawn',
@@ -13,3 +13,19 @@ export enum TeamType {
   BLACK = 'b',
   WHITE = 'w',
 }
+
+export type CastlingRight = {
+  queenside: boolean;
+  kingside: boolean;
+};
+
+export type CastlingRights = Record<TeamType, CastlingRight>;
+
+export type FenArgs = {
+  board: Board;
+  toMove: TeamType;
+  castlingRights: CastlingRights;
+  enPassantSquare: string;
+  halfMoves: number;
+  fullMoves: number;
+};

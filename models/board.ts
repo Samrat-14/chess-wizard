@@ -12,7 +12,7 @@ import { Pawn, Piece, Position, Move } from '@/models';
 
 export class Board {
   pieces: Piece[];
-  totalTurns: number;
+  private totalTurns: number;
   winningTeam?: TeamType;
   lastMove?: Move;
 
@@ -57,7 +57,7 @@ export class Board {
     this.winningTeam = this.currentTeam === TeamType.WHITE ? TeamType.BLACK : TeamType.WHITE;
   }
 
-  checkCurrentTeamMoves() {
+  private checkCurrentTeamMoves() {
     // Loop through all the current team's pieces
     for (const piece of this.pieces.filter((p) => p.team === this.currentTeam)) {
       if (!piece.possibleMoves) continue;
@@ -95,7 +95,7 @@ export class Board {
     }
   }
 
-  getValidMoves(piece: Piece, boardState: Piece[]): Position[] {
+  private getValidMoves(piece: Piece, boardState: Piece[]): Position[] {
     switch (piece.type) {
       case PieceType.PAWN:
         return getPossiblePawnMoves(piece, boardState);
@@ -114,7 +114,7 @@ export class Board {
     }
   }
 
-  playMove(enPassantMove: boolean, validMove: boolean, playedPiece: Piece, destination: Position): boolean {
+  playMove(enPassantMove: boolean, playedPiece: Piece, destination: Position): boolean {
     const pawnDirection = playedPiece.team === TeamType.WHITE ? 1 : -1;
 
     // If the move is Castling, we do this
@@ -129,21 +129,23 @@ export class Board {
       const rookPosition = new Position(destination.x + rookDirectionMultiplier, destination.y);
 
       this.pieces = this.pieces.map((p) => {
+        // Update position of King after castling
         if (p.isSamePiecePosition(playedPiece)) {
           p.position.x = newKingXPosition;
-        } else if (p.isSamePosition(rookPosition)) {
+        }
+        // Update position of Rook which will be castled with
+        else if (p.isSamePosition(rookPosition)) {
           p.position.x = newKingXPosition - direction;
         }
 
+        p.hasMoved = true;
+
         return p;
       });
-
-      this.calculateAllMoves();
-      return true;
     }
 
-    // If the move is enPassant, we do this
-    if (enPassantMove) {
+    // Else if the move is enPassant, we do this
+    else if (enPassantMove) {
       this.pieces = this.pieces.reduce((results, piece) => {
         if (piece.isSamePiecePosition(playedPiece)) {
           if (piece.isPawn) {
@@ -165,13 +167,10 @@ export class Board {
 
         return results;
       }, [] as Piece[]);
-
-      this.calculateAllMoves();
-      return true;
     }
 
-    if (validMove) {
-      // Updates the piece position & if the piece is attacked, removes it
+    // Else, Update the piece position & if the piece is attacked, remove it
+    else {
       this.pieces = this.pieces.reduce((results, piece) => {
         if (piece.isSamePiecePosition(playedPiece)) {
           // Special move for Pawn
@@ -196,12 +195,14 @@ export class Board {
         // Piece at destination won't be pushed in results
         return results;
       }, [] as Piece[]);
-
-      this.calculateAllMoves();
-      return true;
     }
 
-    return false;
+    // Update total turns, last move played and calculate next possible moves
+    this.totalTurns += 1;
+    this.lastMove = new Move(playedPiece.position, destination);
+    this.calculateAllMoves();
+
+    return true;
   }
 
   clone(): Board {

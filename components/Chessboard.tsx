@@ -14,11 +14,11 @@ type ChessboardProps = {
   playMove: (piece: Piece, position: Position) => boolean;
   pieces: Piece[];
   turn?: TeamType;
-  lastMove?: Move;
+  lastMovePlayed?: Move;
 };
 
 export default forwardRef(function Chessboard(
-  { playMove, pieces, turn, lastMove }: ChessboardProps,
+  { playMove, pieces, turn, lastMovePlayed }: ChessboardProps,
   ref: Ref<HTMLDivElement>
 ) {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
@@ -181,7 +181,7 @@ export default forwardRef(function Chessboard(
       const isTileSelected = currentPiece ? currentPiece.isSamePosition(new Position(xPos, yPos)) : false;
 
       // If tile is in last move, highlight it
-      const isTileInLastMove = lastMove ? lastMove.includesPosition(new Position(xPos, yPos)) : false;
+      const isTileInLastMovePlayed = lastMovePlayed ? lastMovePlayed.includesPosition(new Position(xPos, yPos)) : false;
 
       board.push(
         <Tile
@@ -191,7 +191,7 @@ export default forwardRef(function Chessboard(
           turn={turn}
           image={image}
           marked={isTileInPossibleMoves}
-          highlighted={isTileSelected || isTileInLastMove}
+          highlighted={isTileSelected || isTileInLastMovePlayed}
         />
       );
     }

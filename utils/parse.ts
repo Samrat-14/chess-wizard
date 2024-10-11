@@ -1,0 +1,70 @@
+import { CastlingRights, FenArgs, TeamType } from '@/types';
+import { Board } from '@/models';
+import { validateFen } from './validate';
+import { InvalidFenError } from './InvalidFenError';
+
+export function parseFenString(fen: string): FenArgs {
+  const fenTokens = fen.split(' ');
+  validateFen(fenTokens);
+
+  return {
+    board: parseBoard(fenTokens),
+    toMove: parseToMove(fenTokens),
+    castlingRights: parseCastlingRights(fenTokens),
+    enPassantSquare: parseEnPassantSquare(fenTokens),
+    halfMoves: parseHalfMoves(fenTokens),
+    fullMoves: parseFullMoves(fenTokens),
+  };
+}
+
+function parseBoard(fenTokens: string[]): Board {
+  return new Board([], 0);
+  // return fenTokens[0].split('/').map((field) => {
+  //   const piecePlacements: BoardContent[] = [];
+
+  //   for (let i = 0; i < field.length; i++) {
+  //     piecePlacements.push(...parseBoardChar(fenTokens, field.charAt(i)));
+  //   }
+
+  //   return piecePlacements;
+  // });
+}
+
+// function parseBoardChar(fenTokens: string[], notation: Piece | string): BoardContent[] {
+//   if (notation.match(/\d/)) {
+//     return Array(parseInt(notation, 10)).fill(EMPTY_SQUARE);
+//   } else if (notation in PIECES) {
+//     return [PIECES[notation as Piece]];
+//   }
+
+//   throw new InvalidFenError(fenTokens.join(' '));
+// }
+
+function parseToMove(fenTokens: string[]): TeamType {
+  return fenTokens[1] === TeamType.WHITE ? TeamType.WHITE : TeamType.BLACK;
+}
+
+function parseCastlingRights(fenTokens: string[]): CastlingRights {
+  return {
+    [TeamType.WHITE]: {
+      queenside: fenTokens[2].includes('Q'),
+      kingside: fenTokens[2].includes('K'),
+    },
+    [TeamType.BLACK]: {
+      queenside: fenTokens[2].includes('q'),
+      kingside: fenTokens[2].includes('k'),
+    },
+  };
+}
+
+function parseEnPassantSquare(fenTokens: string[]): string {
+  return fenTokens[3];
+}
+
+function parseHalfMoves(fenTokens: string[]): number {
+  return parseInt(fenTokens[4], 10);
+}
+
+function parseFullMoves(fenTokens: string[]): number {
+  return parseInt(fenTokens[5], 10);
+}
