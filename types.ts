@@ -1,4 +1,4 @@
-import { Board } from './models';
+import { Piece } from './models';
 
 export enum PieceType {
   PAWN = 'pawn',
@@ -22,7 +22,7 @@ export type CastlingRight = {
 export type CastlingRights = Record<TeamType, CastlingRight>;
 
 export type FenArgs = {
-  board: Board;
+  boardstate: Piece[];
   toMove: TeamType;
   castlingRights: CastlingRights;
   enPassantSquare: string;

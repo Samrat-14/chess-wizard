@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Shuffle } from 'lucide-react';
 
 import Chessboard from '@/components/Chessboard';
@@ -8,13 +8,12 @@ import Playertag from '@/components/Playertag';
 import Modal from '@/components/ui/Modal';
 
 import { PieceType, TeamType } from '@/types';
-import { initialBoard } from '@/constants';
-import { Board, Move, Pawn, Piece, Position } from '@/models';
+import { Board, Pawn, Piece, Position } from '@/models';
 
 import '@/styles/referee.css';
 
 export default function Referee() {
-  const [board, setBoard] = useState<Board>(new Board([], 0));
+  const [board, setBoard] = useState<Board>(new Board());
   const [promotionPawn, setPromotionPawn] = useState<Piece>();
   const chessboardRef = useRef<HTMLDivElement>(null);
   const promotionModalRef = useRef<HTMLDivElement>(null);
@@ -132,6 +131,9 @@ export default function Referee() {
         return results;
       }, [] as Piece[]);
 
+      // Update the FEN after pawn promotion
+      clonedBoard.fen = clonedBoard.fen.update({ boardstate: clonedBoard.pieces });
+
       clonedBoard.calculateAllMoves();
 
       // Check if player won just after pawn promotion
@@ -153,13 +155,14 @@ export default function Referee() {
 
   const restartGame = () => {
     gameOverModalRef.current?.classList.add('hidden');
-    setBoard(new Board([], 0));
+    setBoard(new Board());
     startGameModalRef.current?.classList.remove('hidden');
   };
 
   const startGame = () => {
     startGameModalRef.current?.classList.add('hidden');
     setBoard(() => {
+      const initialBoard = new Board('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
       initialBoard.calculateAllMoves();
 
       return initialBoard;
@@ -175,6 +178,10 @@ export default function Referee() {
     });
     gameOverModalRef.current?.classList.remove('hidden');
   };
+
+  useEffect(() => {
+    console.log(board.fen.toString());
+  }, [board]);
 
   return (
     <>

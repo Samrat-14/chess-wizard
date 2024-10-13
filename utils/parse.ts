@@ -1,14 +1,15 @@
-import { CastlingRights, FenArgs, TeamType } from '@/types';
-import { Board } from '@/models';
+import { CastlingRights, FenArgs, PieceType, TeamType } from '@/types';
+import { Piece, Position } from '@/models';
 import { validateFen } from './validate';
 import { InvalidFenError } from './InvalidFenError';
+import { PIECES_MAP } from '@/constants';
 
 export function parseFenString(fen: string): FenArgs {
   const fenTokens = fen.split(' ');
   validateFen(fenTokens);
 
   return {
-    board: parseBoard(fenTokens),
+    boardstate: parseBoard(fenTokens),
     toMove: parseToMove(fenTokens),
     castlingRights: parseCastlingRights(fenTokens),
     enPassantSquare: parseEnPassantSquare(fenTokens),
@@ -17,31 +18,37 @@ export function parseFenString(fen: string): FenArgs {
   };
 }
 
-function parseBoard(fenTokens: string[]): Board {
-  return new Board([], 0);
-  // return fenTokens[0].split('/').map((field) => {
-  //   const piecePlacements: BoardContent[] = [];
+function parseBoard(fenTokens: string[]): Piece[] {
+  return fenTokens[0].split('/').reduce((piecePlacements, currentFile, rank) => {
+    let file = 0;
 
-  //   for (let i = 0; i < field.length; i++) {
-  //     piecePlacements.push(...parseBoardChar(fenTokens, field.charAt(i)));
-  //   }
+    for (const token of currentFile) {
+      const piece = parseBoardChar(fenTokens, token, rank, file);
 
-  //   return piecePlacements;
-  // });
+      if (typeof piece === 'number') {
+        file += piece;
+      } else {
+        piecePlacements.push(piece);
+        file++;
+      }
+    }
+
+    return piecePlacements;
+  }, [] as Piece[]);
 }
 
-// function parseBoardChar(fenTokens: string[], notation: Piece | string): BoardContent[] {
-//   if (notation.match(/\d/)) {
-//     return Array(parseInt(notation, 10)).fill(EMPTY_SQUARE);
-//   } else if (notation in PIECES) {
-//     return [PIECES[notation as Piece]];
-//   }
+function parseBoardChar(fenTokens: string[], notation: string, rank: number, file: number): Piece | number {
+  if (notation.match(/\d/)) {
+    return parseInt(notation);
+  } else if (notation in PIECES_MAP) {
+    return new Piece(new Position(file, 7 - rank), PIECES_MAP[notation].type, PIECES_MAP[notation].team);
+  }
 
-//   throw new InvalidFenError(fenTokens.join(' '));
-// }
+  throw new InvalidFenError(fenTokens.join(' '));
+}
 
 function parseToMove(fenTokens: string[]): TeamType {
-  return fenTokens[1] === TeamType.WHITE ? TeamType.WHITE : TeamType.BLACK;
+  return fenTokens[1] === 'w' ? TeamType.WHITE : TeamType.BLACK;
 }
 
 function parseCastlingRights(fenTokens: string[]): CastlingRights {

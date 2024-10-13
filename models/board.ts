@@ -8,16 +8,18 @@ import {
   getPossibleRookMoves,
 } from '@/referee/rules';
 import { PieceType, TeamType } from '@/types';
-import { Pawn, Piece, Position, Move } from '@/models';
+import { Pawn, Piece, Position, Move, Fen } from '@/models';
 
 export class Board {
+  fen: Fen;
   pieces: Piece[];
   private totalTurns: number;
   winningTeam?: TeamType;
   lastMove?: Move;
 
-  constructor(pieces: Piece[], totalTurns: number, lastMove?: Move) {
-    this.pieces = pieces;
+  constructor(fenStr: string = Fen.emptyPosition, totalTurns: number = 0, lastMove?: Move) {
+    this.fen = new Fen(fenStr);
+    this.pieces = this.fen.boardstate.map((p) => p.clone());
     this.totalTurns = totalTurns;
     this.lastMove = lastMove;
   }
@@ -199,6 +201,7 @@ export class Board {
 
     // Update total turns, last move played and calculate next possible moves
     this.totalTurns += 1;
+    this.fen = this.fen.update({ boardstate: this.pieces, toMove: this.currentTeam });
     this.lastMove = new Move(playedPiece.position, destination);
     this.calculateAllMoves();
 
@@ -206,10 +209,6 @@ export class Board {
   }
 
   clone(): Board {
-    return new Board(
-      this.pieces.map((p) => p.clone()),
-      this.totalTurns,
-      this.lastMove?.clone()
-    );
+    return new Board(this.fen.toString(), this.totalTurns, this.lastMove?.clone());
   }
 }
