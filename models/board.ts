@@ -8,7 +8,7 @@ import {
   getPossibleRookMoves,
 } from '@/referee/rules';
 import { PieceType, TeamType } from '@/types';
-import { Pawn, Piece, Position, Move, Fen } from '@/models';
+import { Piece, Position, Move, Fen } from '@/models';
 
 export class Board {
   fen: Fen;
@@ -106,7 +106,7 @@ export class Board {
   private getValidMoves(piece: Piece, boardState: Piece[]): Position[] {
     switch (piece.type) {
       case PieceType.PAWN:
-        return getPossiblePawnMoves(piece, boardState);
+        return getPossiblePawnMoves(piece, boardState, this.fen.enPassantSquare);
       case PieceType.KNIGHT:
         return getPossibleKnightMoves(piece, boardState);
       case PieceType.BISHOP:
@@ -155,9 +155,11 @@ export class Board {
     // Else if the move is enPassant, we do this
     else if (enPassantMove) {
       this.pieces = this.pieces.reduce((results, piece) => {
+        // Update position for the played piece
         if (piece.isSamePiecePosition(playedPiece)) {
           if (piece.isPawn) {
-            (piece as Pawn).enPassant = false;
+            // Update FEN to clear enPassantSquare
+            this.fen = this.fen.update({ enPassantSquare: null });
           }
 
           piece.position.x = destination.x;
@@ -165,11 +167,9 @@ export class Board {
           piece.hasMoved = true;
 
           results.push(piece);
-        } else if (!piece.isSamePosition(new Position(destination.x, destination.y - pawnDirection))) {
-          if (piece.isPawn) {
-            (piece as Pawn).enPassant = false;
-          }
-
+        }
+        // Push remaining pieces except enPassanted pawn piece
+        else if (!piece.isSamePosition(new Position(destination.x, destination.y - pawnDirection))) {
           results.push(piece);
         }
 
@@ -180,11 +180,17 @@ export class Board {
     // Else, Update the piece position & if the piece is attacked, remove it
     else {
       this.pieces = this.pieces.reduce((results, piece) => {
+        // Update position for the played piece
         if (piece.isSamePiecePosition(playedPiece)) {
           // Special move for Pawn
-          if (piece.isPawn) {
-            (piece as Pawn).enPassant =
-              Math.abs(playedPiece.position.y - destination.y) === 2 && piece.type === PieceType.PAWN;
+          if (piece.isPawn && Math.abs(playedPiece.position.y - destination.y) === 2) {
+            // Update FEN for enPassantSquare
+            this.fen = this.fen.update({
+              enPassantSquare: new Position(piece.position.x, piece.position.y + pawnDirection),
+            });
+          } else {
+            // Update FEN to clear enPassantSquare
+            this.fen = this.fen.update({ enPassantSquare: null });
           }
 
           piece.position.x = destination.x;
@@ -192,15 +198,13 @@ export class Board {
           piece.hasMoved = true;
 
           results.push(piece);
-        } else if (!piece.isSamePosition(destination)) {
-          if (piece.isPawn) {
-            (piece as Pawn).enPassant = false;
-          }
-
+        }
+        // Push remaining pieces except attacked piece
+        else if (!piece.isSamePosition(destination)) {
           results.push(piece);
         }
 
-        // Piece at destination won't be pushed in results
+        // Piece at destination won't be pushed in results as it has been attacked
         return results;
       }, [] as Piece[]);
     }

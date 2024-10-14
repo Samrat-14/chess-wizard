@@ -1,7 +1,8 @@
 
 [ ] bug fix: stalemate should show Draw
 
-[ ] feature: implement FEN
+[ ] feature: implement FEN of half moves
+[ ] feature: implement FEN of full moves
 [ ] feature: game state should be saved in local storage
 [ ] feature: add animation for movement
 [ ] feature: add sound effects
@@ -34,3 +35,7 @@
 [*] feature: resign button
 [*] feature: show last played move as highlighted tile
 [*] feature: random user photo
+[*] feature: implement FEN of boardstate
+[*] feature: implement FEN of tomove
+[*] feature: implement FEN of castling rights
+[*] feature: implement FEN of enPassant

@@ -1,8 +1,12 @@
 import { TeamType } from '@/types';
-import { Pawn, Piece, Position } from '@/models';
+import { Fen, Piece, Position } from '@/models';
 import { isTileOccupied, isTileOccupiedByOpponent } from './generalRules';
 
-export const getPossiblePawnMoves = (pawn: Piece, boardState: Piece[]): Position[] => {
+export const getPossiblePawnMoves = (
+  pawn: Piece,
+  boardState: Piece[],
+  fenEnPassantSquare: Position | null
+): Position[] => {
   const possibleMoves: Position[] = [];
 
   const specialRow = pawn.team === TeamType.WHITE ? 1 : 6;
@@ -12,8 +16,6 @@ export const getPossiblePawnMoves = (pawn: Piece, boardState: Piece[]): Position
   const specialMove = new Position(normalMove.x, normalMove.y + pawnDirection);
   const upperLeftAttack = new Position(pawn.position.x - 1, pawn.position.y + pawnDirection);
   const upperRightAttack = new Position(pawn.position.x + 1, pawn.position.y + pawnDirection);
-  const leftPosition = new Position(pawn.position.x - 1, pawn.position.y);
-  const rightPosition = new Position(pawn.position.x + 1, pawn.position.y);
 
   // Movement
   if (!isTileOccupied(normalMove, boardState)) {
@@ -27,23 +29,19 @@ export const getPossiblePawnMoves = (pawn: Piece, boardState: Piece[]): Position
   // Upper left position for attack
   if (isTileOccupiedByOpponent(upperLeftAttack, boardState, pawn.team)) {
     possibleMoves.push(upperLeftAttack);
-  } else if (!isTileOccupied(upperLeftAttack, boardState)) {
-    const leftPiece = boardState.find((p) => p.isSamePosition(leftPosition));
-
-    if (leftPiece && (leftPiece as Pawn).enPassant) {
-      possibleMoves.push(upperLeftAttack);
-    }
+  }
+  // Check if upper left position is enPassantSquare
+  else if (fenEnPassantSquare?.isSamePosition(upperLeftAttack)) {
+    possibleMoves.push(upperLeftAttack);
   }
 
   // Upper right position for attack
   if (isTileOccupiedByOpponent(upperRightAttack, boardState, pawn.team)) {
     possibleMoves.push(upperRightAttack);
-  } else if (!isTileOccupied(upperRightAttack, boardState)) {
-    const rightPiece = boardState.find((p) => p.isSamePosition(rightPosition));
-
-    if (rightPiece && (rightPiece as Pawn).enPassant) {
-      possibleMoves.push(upperRightAttack);
-    }
+  }
+  // Check if upper right position is enPassantSquare
+  else if (fenEnPassantSquare?.isSamePosition(upperRightAttack)) {
+    possibleMoves.push(upperRightAttack);
   }
 
   return possibleMoves;

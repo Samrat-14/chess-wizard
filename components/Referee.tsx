@@ -8,7 +8,7 @@ import Playertag from '@/components/Playertag';
 import Modal from '@/components/ui/Modal';
 
 import { PieceType, TeamType } from '@/types';
-import { Board, Fen, Pawn, Piece, Position } from '@/models';
+import { Board, Fen, Piece, Position } from '@/models';
 
 import '@/styles/referee.css';
 
@@ -59,7 +59,7 @@ export default function Referee() {
       return clonedBoard;
     });
 
-    // For promoting a Pawn
+    // Row for promoting a Pawn
     const promotionRow = playedPiece.team === TeamType.WHITE ? 7 : 0;
 
     if (destination.y === promotionRow && playedPiece.isPawn) {
@@ -104,7 +104,7 @@ export default function Referee() {
             p.position.x === desiredPosition.x &&
             p.position.y === desiredPosition.y - pawnDirection &&
             p.isPawn &&
-            (p as Pawn).enPassant
+            board.fen.enPassantSquare?.isSamePosition(new Position(desiredPosition.x, desiredPosition.y))
         );
         if (piece) {
           return true;

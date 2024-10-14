@@ -3,9 +3,15 @@ import { Piece } from './piece';
 import { Position } from './position';
 
 export class Pawn extends Piece {
-  enPassant?: boolean;
+  enPassant: boolean;
 
-  constructor(position: Position, team: TeamType, hasMoved: boolean, enPassant?: boolean, possibleMoves?: Position[]) {
+  constructor(
+    position: Position,
+    team: TeamType,
+    hasMoved: boolean = false,
+    enPassant: boolean = false,
+    possibleMoves?: Position[]
+  ) {
     super(position, PieceType.PAWN, team, hasMoved, possibleMoves);
 
     this.enPassant = enPassant;

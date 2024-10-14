@@ -1,17 +1,19 @@
 import { CastlingRights, FenArgs, TeamType } from '@/types';
 import { parseFenString } from '@/utils/parse';
 import { Piece } from './piece';
-import { PIECES_MAP } from '@/constants';
+import { Position } from './position';
+import { HORIZONTAL_AXIS, PIECES_MAP, VERTICAL_AXIS } from '@/constants';
 
 export class Fen {
   static readonly startingPosition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   static readonly emptyPosition = '8/8/8/8/8/8/8/8 w KQkq - 0 1';
   static readonly debugCastling = 'r3k2r/p1pp1ppp/b1nb1q1n/1p2p3/1P2P3/B1NB1Q1N/P1PP1PPP/R3K2R b KQkq - 0 1';
+  static readonly debugEnPassant = 'rnbqkbnr/ppp1p1pp/5p2/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 1';
 
   readonly boardstate: Piece[];
   readonly toMove: TeamType;
   readonly castlingRights: CastlingRights;
-  readonly enPassantSquare: string;
+  readonly enPassantSquare: Position | null;
   readonly halfMoves: number;
   readonly fullMoves: number;
 
@@ -97,7 +99,11 @@ export class Fen {
   }
 
   private unparseEnPassantSquare(): string {
-    return this.enPassantSquare;
+    if (this.enPassantSquare === null) {
+      return '-';
+    }
+
+    return `${HORIZONTAL_AXIS[this.enPassantSquare.x]}${VERTICAL_AXIS[this.enPassantSquare.y]}`;
   }
 
   private unparseHalfMoves(): string {

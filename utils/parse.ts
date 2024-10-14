@@ -1,8 +1,8 @@
-import { CastlingRights, FenArgs, PieceType, TeamType } from '@/types';
-import { Piece, Position } from '@/models';
 import { validateFen } from './validate';
 import { InvalidFenError } from './InvalidFenError';
-import { PIECES_MAP } from '@/constants';
+import { CastlingRights, FenArgs, PieceType, TeamType } from '@/types';
+import { Piece, Position } from '@/models';
+import { HORIZONTAL_AXIS, PIECES_MAP, VERTICAL_AXIS } from '@/constants';
 
 export function parseFenString(fen: string): FenArgs {
   const fenTokens = fen.split(' ');
@@ -65,8 +65,10 @@ function parseCastlingRights(fenTokens: string[]): CastlingRights {
   };
 }
 
-function parseEnPassantSquare(fenTokens: string[]): string {
-  return fenTokens[3];
+function parseEnPassantSquare(fenTokens: string[]): Position | null {
+  if (fenTokens[3] === '-') return null;
+
+  return new Position(HORIZONTAL_AXIS.indexOf(fenTokens[3][0]), VERTICAL_AXIS.indexOf(fenTokens[3][1]));
 }
 
 function parseHalfMoves(fenTokens: string[]): number {
