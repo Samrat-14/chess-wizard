@@ -59,7 +59,7 @@ export default function Referee() {
       return clonedBoard;
     });
 
-    // Row for promoting a Pawn
+    // Row for promoting a pawn
     const promotionRow = playedPiece.team === TeamType.WHITE ? 7 : 0;
 
     if (destination.y === promotionRow && playedPiece.isPawn) {

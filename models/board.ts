@@ -182,7 +182,7 @@ export class Board {
       this.pieces = this.pieces.reduce((results, piece) => {
         // Update position for the played piece
         if (piece.isSamePiecePosition(playedPiece)) {
-          // Special move for Pawn
+          // Special move for pawn
           if (piece.isPawn && Math.abs(playedPiece.position.y - destination.y) === 2) {
             // Update FEN for enPassantSquare
             this.fen = this.fen.update({
