@@ -41,6 +41,7 @@ function parseBoardChar(fenTokens: string[], notation: string, rank: number, fil
   if (notation.match(/\d/)) {
     return parseInt(notation);
   } else if (notation in PIECES_MAP) {
+    // FIX: new Piece is unaware of hasMoved property
     return new Piece(new Position(file, 7 - rank), PIECES_MAP[notation].type, PIECES_MAP[notation].team);
   }
 

@@ -38,7 +38,13 @@ export class Board {
     for (const king of this.pieces.filter((p) => p.isKing)) {
       if (king.possibleMoves === undefined) continue;
 
-      king.possibleMoves = [...king.possibleMoves, ...getCastlingMoves(king, this.pieces)];
+      const castlingRight = { ...this.fen.castlingRights[king.team] };
+
+      // Get the castling rights and possible castling moves
+      king.possibleMoves = [...king.possibleMoves, ...getCastlingMoves(king, this.pieces, castlingRight)];
+
+      // Update FEN for castling rights
+      this.fen = this.fen.update({ castlingRights: { ...this.fen.castlingRights, [king.team]: castlingRight } });
     }
 
     // Check if the current team moves are valid
@@ -134,13 +140,13 @@ export class Board {
         // Update position of King after castling
         if (p.isSamePiecePosition(playedPiece)) {
           p.position.x = newKingXPosition;
+          p.hasMoved = true;
         }
         // Update position of Rook which will be castled with
         else if (p.isSamePosition(rookPosition)) {
           p.position.x = newKingXPosition - direction;
+          p.hasMoved = true;
         }
-
-        p.hasMoved = true;
 
         return p;
       });

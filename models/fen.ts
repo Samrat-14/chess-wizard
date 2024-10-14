@@ -6,6 +6,7 @@ import { PIECES_MAP } from '@/constants';
 export class Fen {
   static readonly startingPosition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   static readonly emptyPosition = '8/8/8/8/8/8/8/8 w KQkq - 0 1';
+  static readonly debugCastling = 'r3k2r/p1pp1ppp/b1nb1q1n/1p2p3/1P2P3/B1NB1Q1N/P1PP1PPP/R3K2R b KQkq - 0 1';
 
   readonly boardstate: Piece[];
   readonly toMove: TeamType;

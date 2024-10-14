@@ -1,5 +1,6 @@
 import { Piece, Position } from '@/models';
 import { isTileOccupied, isTileOccupiedByOpponent } from './generalRules';
+import { CastlingRight } from '@/types';
 
 export const getPossibleKingMoves = (king: Piece, boardState: Piece[]): Position[] => {
   const possibleMoves: Position[] = [];
@@ -36,11 +37,23 @@ export const getPossibleKingMoves = (king: Piece, boardState: Piece[]): Position
 };
 
 // In this method, the enemy moves have already been calculated
-export const getCastlingMoves = (king: Piece, boardState: Piece[]): Position[] => {
+export const getCastlingMoves = (king: Piece, boardState: Piece[], castlingRight: CastlingRight): Position[] => {
   const possibleMoves: Position[] = [];
 
+  // Check in FEN if castling rights exist
+  if (!castlingRight.queenside && !castlingRight.kingside) return possibleMoves;
+
   // Check if the King has moved yet
-  if (king.hasMoved) return possibleMoves;
+  if (king.hasMoved) {
+    castlingRight.queenside = false;
+    castlingRight.kingside = false;
+
+    return possibleMoves;
+  }
+
+  // Flags to check castling rights
+  let queensideRight = false;
+  let kingsideRight = false;
 
   // Get Rooks from King's team that haven't moved yet
   const rooks = boardState.filter((p) => p.isRook && p.team === king.team && !p.hasMoved);
@@ -48,6 +61,15 @@ export const getCastlingMoves = (king: Piece, boardState: Piece[]): Position[] =
   for (const rook of rooks) {
     // Determine if we need to go to the right or left of the King
     const direction = rook.position.x - king.position.x > 0 ? 1 : -1;
+
+    // Mark the flags true, if it wasn't already false
+    if (direction === 1 && castlingRight.kingside) {
+      kingsideRight = true;
+    } else if (direction === -1 && castlingRight.queenside) {
+      queensideRight = true;
+    } else {
+      continue;
+    }
 
     const adjacentPosition = king.position.clone();
     adjacentPosition.x += direction;
@@ -90,6 +112,10 @@ export const getCastlingMoves = (king: Piece, boardState: Piece[]): Position[] =
     // Now add it as a possible move
     possibleMoves.push(new Position(king.position.x + direction * 2, king.position.y));
   }
+
+  // Update the castling rights in FEN
+  castlingRight.queenside = queensideRight;
+  castlingRight.kingside = kingsideRight;
 
   return possibleMoves;
 };

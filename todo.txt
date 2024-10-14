@@ -1,3 +1,21 @@
+
+[ ] bug fix: stalemate should show Draw
+
+[ ] feature: implement FEN
+[ ] feature: game state should be saved in local storage
+[ ] feature: add animation for movement
+[ ] feature: add sound effects
+[ ] feature: implement move list
+[ ] feature: add move notations
+
+[ ] archive: highlight hovered tile with piece selected
+[ ] archive: implement timer
+
+
+
+
+
+****************************** COMPLETED ******************************
 [*] refactor the code
 [*] refactor: change marked possible move for castling
 [*] refactor: change piece images
@@ -6,7 +24,6 @@
 
 [*] bug fix: castling should not be possible if King is in check
 [*] bug fix: castling should be possible even if tile beside queen side rook is in check
-[ ] bug fix: stalemate should show Draw
 
 [*] feature: implement click functionality for playing
 [*] feature: highlight selected tile with piece 
@@ -17,11 +34,3 @@
 [*] feature: resign button
 [*] feature: show last played move as highlighted tile
 [*] feature: random user photo
-[ ] feature: game state should be saved in local storage
-[ ] feature: add animation for movement
-[ ] feature: add sound effects
-[ ] feature: implement move list
-[ ] feature: add move notations
-
-[ ] archive: highlight hovered tile with piece selected
-[ ] archive: implement timer

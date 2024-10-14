@@ -8,7 +8,7 @@ import Playertag from '@/components/Playertag';
 import Modal from '@/components/ui/Modal';
 
 import { PieceType, TeamType } from '@/types';
-import { Board, Pawn, Piece, Position } from '@/models';
+import { Board, Fen, Pawn, Piece, Position } from '@/models';
 
 import '@/styles/referee.css';
 
@@ -162,7 +162,7 @@ export default function Referee() {
   const startGame = () => {
     startGameModalRef.current?.classList.add('hidden');
     setBoard(() => {
-      const initialBoard = new Board('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+      const initialBoard = new Board(Fen.startingPosition);
       initialBoard.calculateAllMoves();
 
       return initialBoard;
