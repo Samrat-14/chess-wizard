@@ -1,7 +1,6 @@
 
 [ ] bug fix: stalemate should show Draw
 
-[ ] feature: implement FEN of full moves
 [ ] feature: game state should be saved in local storage
 [ ] feature: load FEN and play
 [ ] feature: add animation for movement
@@ -40,3 +39,4 @@
 [*] feature: implement FEN of castling rights
 [*] feature: implement FEN of enPassant
 [*] feature: implement FEN of half moves
+[*] feature: implement FEN of full moves

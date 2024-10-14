@@ -14,17 +14,15 @@ import { Piece, Position, Move, Fen } from '@/models';
 export class Board {
   private _totalTurns: number;
   private _lastMove: Move | undefined;
-  private _halfMoves: number;
   fen: Fen;
   pieces: Piece[];
   winningTeam?: TeamType;
 
-  constructor(fenStr: string = Fen.emptyPosition, totalTurns: number = 0, lastMove?: Move, halfMoves: number = 0) {
+  constructor(fenStr: string = Fen.emptyPosition, totalTurns: number = 0, lastMove?: Move) {
     this.fen = new Fen(fenStr);
     this.pieces = this.fen.boardstate.map((p) => p.clone());
     this._totalTurns = totalTurns;
     this._lastMove = lastMove;
-    this._halfMoves = halfMoves;
   }
 
   get currentTeam(): TeamType {
@@ -155,8 +153,10 @@ export class Board {
 
       const noCastlingRight: CastlingRight = { queenside: false, kingside: false };
       // Castling is done, so there should be no castling rights
+      // Also increment half moves after castling
       this.fen = this.fen.update({
         castlingRights: { ...this.fen.castlingRights, [playedPiece.team]: noCastlingRight },
+        halfMoves: this.fen.halfMoves + 1,
       });
     }
 
@@ -200,10 +200,11 @@ export class Board {
           }
 
           // Reset halfmoves due to pawn advance or piece capture, increment otherwise
+          // NOTE: halfmoves should be updated before playedpiece position is updated
           if (piece.isPawn || isTileOccupiedByOpponent(destination, this.pieces, piece.team)) {
-            this._halfMoves = 0;
+            this.fen = this.fen.update({ halfMoves: 0 });
           } else {
-            this._halfMoves += 1;
+            this.fen = this.fen.update({ halfMoves: this.fen.halfMoves + 1 });
           }
 
           // Update position for the played piece
@@ -249,13 +250,18 @@ export class Board {
       }, [] as Piece[]);
     }
 
+    // Update fullmoves after every black move
+    // NOTE: fullmoves should be updated before totalturns
+    if (this.currentTeam === TeamType.BLACK) {
+      this.fen = this.fen.update({ fullMoves: this.fen.fullMoves + 1 });
+    }
+
     // Update total turns
     this._totalTurns += 1;
     // Update last move played
     this._lastMove = new Move(playedPiece.position, destination);
-
     // Update the FEN
-    this.fen = this.fen.update({ boardstate: this.pieces, toMove: this.currentTeam, halfMoves: this._halfMoves });
+    this.fen = this.fen.update({ boardstate: this.pieces, toMove: this.currentTeam });
 
     // Calculate next possible moves
     this.calculateAllMoves();
@@ -264,6 +270,6 @@ export class Board {
   }
 
   clone(): Board {
-    return new Board(this.fen.toString(), this._totalTurns, this._lastMove?.clone(), this._halfMoves);
+    return new Board(this.fen.toString(), this._totalTurns, this._lastMove?.clone());
   }
 }
