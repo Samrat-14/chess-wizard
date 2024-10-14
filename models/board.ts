@@ -7,7 +7,7 @@ import {
   getPossibleQueenMoves,
   getPossibleRookMoves,
 } from '@/referee/rules';
-import { PieceType, TeamType } from '@/types';
+import { CastlingRight, PieceType, TeamType } from '@/types';
 import { Piece, Position, Move, Fen } from '@/models';
 
 export class Board {
@@ -38,13 +38,10 @@ export class Board {
     for (const king of this.pieces.filter((p) => p.isKing)) {
       if (king.possibleMoves === undefined) continue;
 
-      const castlingRight = { ...this.fen.castlingRights[king.team] };
+      const castlingRight: CastlingRight = { ...this.fen.castlingRights[king.team] };
 
-      // Get the castling rights and possible castling moves
+      // Get possible castling moves
       king.possibleMoves = [...king.possibleMoves, ...getCastlingMoves(king, this.pieces, castlingRight)];
-
-      // Update FEN for castling rights
-      this.fen = this.fen.update({ castlingRights: { ...this.fen.castlingRights, [king.team]: castlingRight } });
     }
 
     // Check if the current team moves are valid
@@ -125,7 +122,7 @@ export class Board {
   playMove(enPassantMove: boolean, playedPiece: Piece, destination: Position): boolean {
     const pawnDirection = playedPiece.team === TeamType.WHITE ? 1 : -1;
 
-    // If the move is Castling, we do this
+    // Move is Castling, so played piece has to be king
     if (playedPiece.isKing && Math.abs(destination.x - playedPiece.position.x) === 2) {
       // Direction of castling
       const direction = destination.x - playedPiece.position.x > 0 ? 1 : -1;
@@ -140,31 +137,32 @@ export class Board {
         // Update position of King after castling
         if (p.isSamePiecePosition(playedPiece)) {
           p.position.x = newKingXPosition;
-          p.hasMoved = true;
         }
         // Update position of Rook which will be castled with
         else if (p.isSamePosition(rookPosition)) {
           p.position.x = newKingXPosition - direction;
-          p.hasMoved = true;
         }
 
         return p;
       });
+
+      const noCastlingRight: CastlingRight = { queenside: false, kingside: false };
+      // Castling is done, so there should be no castling rights
+      this.fen = this.fen.update({
+        castlingRights: { ...this.fen.castlingRights, [playedPiece.team]: noCastlingRight },
+      });
     }
 
-    // Else if the move is enPassant, we do this
+    // Move is enPassant, so played piece is pawn
     else if (enPassantMove) {
       this.pieces = this.pieces.reduce((results, piece) => {
-        // Update position for the played piece
+        // Update position for the played pawn piece
         if (piece.isSamePiecePosition(playedPiece)) {
-          if (piece.isPawn) {
-            // Update FEN to clear enPassantSquare
-            this.fen = this.fen.update({ enPassantSquare: null });
-          }
+          // Update FEN to clear enPassantSquare
+          this.fen = this.fen.update({ enPassantSquare: null });
 
           piece.position.x = destination.x;
           piece.position.y = destination.y;
-          piece.hasMoved = true;
 
           results.push(piece);
         }
@@ -177,7 +175,7 @@ export class Board {
       }, [] as Piece[]);
     }
 
-    // Else, Update the piece position & if the piece is attacked, remove it
+    // Move other than Castling & EnPassant, so update the piece & if the piece is attacked, remove it
     else {
       this.pieces = this.pieces.reduce((results, piece) => {
         // Update position for the played piece
@@ -195,7 +193,33 @@ export class Board {
 
           piece.position.x = destination.x;
           piece.position.y = destination.y;
-          piece.hasMoved = true;
+
+          // King is moved
+          if (piece.isKing) {
+            const noCastlingRight: CastlingRight = { queenside: false, kingside: false };
+            // Update FEN to no castling rights
+            this.fen = this.fen.update({
+              castlingRights: { ...this.fen.castlingRights, [playedPiece.team]: noCastlingRight },
+            });
+          }
+
+          // Rook is moved
+          if (piece.isRook) {
+            const king = this.pieces.find((p) => p.isKing && p.team === piece.team);
+            if (king) {
+              const rookSide = playedPiece.position.x - king.position.x > 0 ? 'kingside' : 'queenside';
+
+              // Current castling right
+              let castlingRight: CastlingRight = { ...this.fen.castlingRights[playedPiece.team] };
+
+              if (rookSide === 'kingside') castlingRight.kingside = false;
+              if (rookSide === 'queenside') castlingRight.queenside = false;
+              // Update FEN to no castling right for the rook side
+              this.fen = this.fen.update({
+                castlingRights: { ...this.fen.castlingRights, [playedPiece.team]: castlingRight },
+              });
+            }
+          }
 
           results.push(piece);
         }

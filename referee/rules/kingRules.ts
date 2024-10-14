@@ -40,40 +40,24 @@ export const getPossibleKingMoves = (king: Piece, boardState: Piece[]): Position
 export const getCastlingMoves = (king: Piece, boardState: Piece[], castlingRight: CastlingRight): Position[] => {
   const possibleMoves: Position[] = [];
 
-  // Check in FEN if castling rights exist
+  // No castling rights exist for king.team
   if (!castlingRight.queenside && !castlingRight.kingside) return possibleMoves;
 
-  // Check if the King has moved yet
-  if (king.hasMoved) {
-    castlingRight.queenside = false;
-    castlingRight.kingside = false;
-
-    return possibleMoves;
-  }
-
-  // Flags to check castling rights
-  let queensideRight = false;
-  let kingsideRight = false;
-
-  // Get Rooks from King's team that haven't moved yet
-  const rooks = boardState.filter((p) => p.isRook && p.team === king.team && !p.hasMoved);
+  // Get rooks from king.team
+  const rooks = boardState.filter((p) => p.isRook && p.team === king.team);
 
   for (const rook of rooks) {
     // Determine if we need to go to the right or left of the King
     const direction = rook.position.x - king.position.x > 0 ? 1 : -1;
 
-    // Mark the flags true, if it wasn't already false
-    if (direction === 1 && castlingRight.kingside) {
-      kingsideRight = true;
-    } else if (direction === -1 && castlingRight.queenside) {
-      queensideRight = true;
-    } else {
-      continue;
-    }
+    // Rook is kingside, but kingside castling right doesn't exist
+    if (direction === 1 && !castlingRight.kingside) continue;
+    // Rook is queenside, but queenside castling right doesn't exist
+    if (direction === -1 && !castlingRight.queenside) continue;
 
     const adjacentPosition = king.position.clone();
     adjacentPosition.x += direction;
-
+    // Rook cannot move to the required square after castling
     if (!rook.possibleMoves?.some((m) => m.isSamePosition(adjacentPosition))) continue;
 
     // Now we know the Rook can move to the adjacent side of the King
@@ -112,10 +96,6 @@ export const getCastlingMoves = (king: Piece, boardState: Piece[], castlingRight
     // Now add it as a possible move
     possibleMoves.push(new Position(king.position.x + direction * 2, king.position.y));
   }
-
-  // Update the castling rights in FEN
-  castlingRight.queenside = queensideRight;
-  castlingRight.kingside = kingsideRight;
 
   return possibleMoves;
 };
