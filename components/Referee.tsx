@@ -239,7 +239,7 @@ export default function Referee() {
           playMove={playMove}
           pieces={board.pieces}
           turn={boardRotates ? board.currentTeam : undefined}
-          lastMovePlayed={board.lastMove}
+          lastMovePlayed={board.getLastMove}
         />
         <Playertag playerName={boardRotates && board.currentTeam === TeamType.BLACK ? playerBlack : playerWhite} />
       </main>

@@ -6,26 +6,33 @@ import {
   getPossiblePawnMoves,
   getPossibleQueenMoves,
   getPossibleRookMoves,
+  isTileOccupiedByOpponent,
 } from '@/referee/rules';
 import { CastlingRight, PieceType, TeamType } from '@/types';
 import { Piece, Position, Move, Fen } from '@/models';
 
 export class Board {
+  private _totalTurns: number;
+  private _lastMove: Move | undefined;
+  private _halfMoves: number;
   fen: Fen;
   pieces: Piece[];
-  private _totalTurns: number;
   winningTeam?: TeamType;
-  lastMove?: Move;
 
-  constructor(fenStr: string = Fen.emptyPosition, totalTurns: number = 0, lastMove?: Move) {
+  constructor(fenStr: string = Fen.emptyPosition, totalTurns: number = 0, lastMove?: Move, halfMoves: number = 0) {
     this.fen = new Fen(fenStr);
     this.pieces = this.fen.boardstate.map((p) => p.clone());
     this._totalTurns = totalTurns;
-    this.lastMove = lastMove;
+    this._lastMove = lastMove;
+    this._halfMoves = halfMoves;
   }
 
   get currentTeam(): TeamType {
     return this._totalTurns % 2 === 0 ? TeamType.WHITE : TeamType.BLACK;
+  }
+
+  get getLastMove(): Move | undefined {
+    return this._lastMove;
   }
 
   calculateAllMoves() {
@@ -68,15 +75,15 @@ export class Board {
       if (!piece.possibleMoves) continue;
 
       // Simulate all the piece moves
-      for (const move of piece.possibleMoves) {
+      for (const possibleMove of piece.possibleMoves) {
         const simulatedBoard = this.clone();
 
         // Remove any piece at destination position
-        simulatedBoard.pieces = simulatedBoard.pieces.filter((p) => !p.isSamePosition(move));
+        simulatedBoard.pieces = simulatedBoard.pieces.filter((p) => !p.isSamePosition(possibleMove));
 
         //  Get the piece of the clone board
         const clonedPiece = simulatedBoard.pieces.find((p) => p.isSamePiecePosition(piece))!;
-        clonedPiece.position = move.clone();
+        clonedPiece.position = possibleMove.clone();
 
         //  Get the King of the clone board
         const clonedKing = simulatedBoard.pieces.find((p) => p.isKing && p.team === simulatedBoard.currentTeam)!;
@@ -88,11 +95,11 @@ export class Board {
 
           if (enemy.isPawn) {
             if (enemy.possibleMoves.some((m) => m.x !== enemy.position.x && m.isSamePosition(clonedKing.position))) {
-              piece.possibleMoves = piece.possibleMoves.filter((m) => !m.isSamePosition(move));
+              piece.possibleMoves = piece.possibleMoves.filter((m) => !m.isSamePosition(possibleMove));
             }
           } else {
             if (enemy.possibleMoves.some((m) => m.isSamePosition(clonedKing.position))) {
-              piece.possibleMoves = piece.possibleMoves.filter((m) => !m.isSamePosition(move));
+              piece.possibleMoves = piece.possibleMoves.filter((m) => !m.isSamePosition(possibleMove));
             }
           }
         }
@@ -156,11 +163,9 @@ export class Board {
     // Move is enPassant, so played piece is pawn
     else if (enPassantMove) {
       this.pieces = this.pieces.reduce((results, piece) => {
-        // Update position for the played pawn piece
+        // For the played piece
         if (piece.isSamePiecePosition(playedPiece)) {
-          // Update FEN to clear enPassantSquare
-          this.fen = this.fen.update({ enPassantSquare: null });
-
+          // Update position for the played pawn piece
           piece.position.x = destination.x;
           piece.position.y = destination.y;
 
@@ -173,12 +178,15 @@ export class Board {
 
         return results;
       }, [] as Piece[]);
+
+      // Update FEN to clear enPassantSquare
+      this.fen = this.fen.update({ enPassantSquare: null });
     }
 
-    // Move other than Castling & EnPassant, so update the piece & if the piece is attacked, remove it
+    // Move other than Castling & EnPassant, so update the piece & if the piece is captured, remove it
     else {
       this.pieces = this.pieces.reduce((results, piece) => {
-        // Update position for the played piece
+        // For the played piece
         if (piece.isSamePiecePosition(playedPiece)) {
           // Special move for pawn
           if (piece.isPawn && Math.abs(playedPiece.position.y - destination.y) === 2) {
@@ -191,6 +199,14 @@ export class Board {
             this.fen = this.fen.update({ enPassantSquare: null });
           }
 
+          // Reset halfmoves due to pawn advance or piece capture, increment otherwise
+          if (piece.isPawn || isTileOccupiedByOpponent(destination, this.pieces, piece.team)) {
+            this._halfMoves = 0;
+          } else {
+            this._halfMoves += 1;
+          }
+
+          // Update position for the played piece
           piece.position.x = destination.x;
           piece.position.y = destination.y;
 
@@ -199,7 +215,7 @@ export class Board {
             const noCastlingRight: CastlingRight = { queenside: false, kingside: false };
             // Update FEN to no castling rights
             this.fen = this.fen.update({
-              castlingRights: { ...this.fen.castlingRights, [playedPiece.team]: noCastlingRight },
+              castlingRights: { ...this.fen.castlingRights, [piece.team]: noCastlingRight },
             });
           }
 
@@ -207,42 +223,47 @@ export class Board {
           if (piece.isRook) {
             const king = this.pieces.find((p) => p.isKing && p.team === piece.team);
             if (king) {
-              const rookSide = playedPiece.position.x - king.position.x > 0 ? 'kingside' : 'queenside';
+              const rookSide = piece.position.x - king.position.x > 0 ? 'kingside' : 'queenside';
 
               // Current castling right
-              let castlingRight: CastlingRight = { ...this.fen.castlingRights[playedPiece.team] };
+              let castlingRight: CastlingRight = { ...this.fen.castlingRights[piece.team] };
 
               if (rookSide === 'kingside') castlingRight.kingside = false;
               if (rookSide === 'queenside') castlingRight.queenside = false;
               // Update FEN to no castling right for the rook side
               this.fen = this.fen.update({
-                castlingRights: { ...this.fen.castlingRights, [playedPiece.team]: castlingRight },
+                castlingRights: { ...this.fen.castlingRights, [piece.team]: castlingRight },
               });
             }
           }
 
           results.push(piece);
         }
-        // Push remaining pieces except attacked piece
+        // Push remaining pieces except captured piece
         else if (!piece.isSamePosition(destination)) {
           results.push(piece);
         }
 
-        // Piece at destination won't be pushed in results as it has been attacked
+        // Piece at destination won't be pushed in results as it has been captured
         return results;
       }, [] as Piece[]);
     }
 
-    // Update total turns, last move played and calculate next possible moves
+    // Update total turns
     this._totalTurns += 1;
-    this.fen = this.fen.update({ boardstate: this.pieces, toMove: this.currentTeam });
-    this.lastMove = new Move(playedPiece.position, destination);
+    // Update last move played
+    this._lastMove = new Move(playedPiece.position, destination);
+
+    // Update the FEN
+    this.fen = this.fen.update({ boardstate: this.pieces, toMove: this.currentTeam, halfMoves: this._halfMoves });
+
+    // Calculate next possible moves
     this.calculateAllMoves();
 
     return true;
   }
 
   clone(): Board {
-    return new Board(this.fen.toString(), this._totalTurns, this.lastMove?.clone());
+    return new Board(this.fen.toString(), this._totalTurns, this._lastMove?.clone(), this._halfMoves);
   }
 }
