@@ -42,16 +42,16 @@ export class Fen {
 
   toString(): string {
     return [
-      this.unparseBoardState(),
-      this.unparseToMove(),
-      this.unparseCastlingRights(),
-      this.unparseEnPassantSquare(),
-      this.unparseHalfMoves(),
-      this.unparseFullMoves(),
+      this._unparseBoardState(),
+      this._unparseToMove(),
+      this._unparseCastlingRights(),
+      this._unparseEnPassantSquare(),
+      this._unparseHalfMoves(),
+      this._unparseFullMoves(),
     ].join(' ');
   }
 
-  private unparseBoardState(): string {
+  private _unparseBoardState(): string {
     return Array.from(Array(8))
       .map((_, rank) => {
         let str = '';
@@ -85,11 +85,11 @@ export class Fen {
       .join('/');
   }
 
-  private unparseToMove(): string {
+  private _unparseToMove(): string {
     return this.toMove === TeamType.WHITE ? 'w' : 'b';
   }
 
-  private unparseCastlingRights(): string {
+  private _unparseCastlingRights(): string {
     const castlingRights = this.castlingRights;
     let fenCastlingRights = castlingRights[TeamType.WHITE].kingside ? 'K' : '';
     fenCastlingRights += castlingRights[TeamType.WHITE].queenside ? 'Q' : '';
@@ -98,7 +98,7 @@ export class Fen {
     return fenCastlingRights ? fenCastlingRights : '-';
   }
 
-  private unparseEnPassantSquare(): string {
+  private _unparseEnPassantSquare(): string {
     if (this.enPassantSquare === null) {
       return '-';
     }
@@ -106,11 +106,11 @@ export class Fen {
     return `${HORIZONTAL_AXIS[this.enPassantSquare.x]}${VERTICAL_AXIS[this.enPassantSquare.y]}`;
   }
 
-  private unparseHalfMoves(): string {
+  private _unparseHalfMoves(): string {
     return this.halfMoves.toString();
   }
 
-  private unparseFullMoves(): string {
+  private _unparseFullMoves(): string {
     return this.fullMoves.toString();
   }
 }

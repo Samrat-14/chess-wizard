@@ -13,25 +13,25 @@ import { Piece, Position, Move, Fen } from '@/models';
 export class Board {
   fen: Fen;
   pieces: Piece[];
-  private totalTurns: number;
+  private _totalTurns: number;
   winningTeam?: TeamType;
   lastMove?: Move;
 
   constructor(fenStr: string = Fen.emptyPosition, totalTurns: number = 0, lastMove?: Move) {
     this.fen = new Fen(fenStr);
     this.pieces = this.fen.boardstate.map((p) => p.clone());
-    this.totalTurns = totalTurns;
+    this._totalTurns = totalTurns;
     this.lastMove = lastMove;
   }
 
   get currentTeam(): TeamType {
-    return this.totalTurns % 2 === 0 ? TeamType.WHITE : TeamType.BLACK;
+    return this._totalTurns % 2 === 0 ? TeamType.WHITE : TeamType.BLACK;
   }
 
   calculateAllMoves() {
     // Set possible valid moves
     for (const piece of this.pieces) {
-      piece.possibleMoves = this.getValidMoves(piece, this.pieces);
+      piece.possibleMoves = this._getValidMoves(piece, this.pieces);
     }
 
     // Calculate castling moves
@@ -45,7 +45,7 @@ export class Board {
     }
 
     // Check if the current team moves are valid
-    this.checkCurrentTeamMoves();
+    this._checkCurrentTeamMoves();
 
     // Remove possible moves for team who is not playing
     for (const piece of this.pieces.filter((p) => p.team !== this.currentTeam)) {
@@ -62,7 +62,7 @@ export class Board {
     this.winningTeam = this.currentTeam === TeamType.WHITE ? TeamType.BLACK : TeamType.WHITE;
   }
 
-  private checkCurrentTeamMoves() {
+  private _checkCurrentTeamMoves() {
     // Loop through all the current team's pieces
     for (const piece of this.pieces.filter((p) => p.team === this.currentTeam)) {
       if (!piece.possibleMoves) continue;
@@ -84,7 +84,7 @@ export class Board {
         // Loop through all enemy pieces, update their possible moves
         // And check if the current team's King will be in danger
         for (const enemy of simulatedBoard.pieces.filter((p) => p.team !== simulatedBoard.currentTeam)) {
-          enemy.possibleMoves = simulatedBoard.getValidMoves(enemy, simulatedBoard.pieces);
+          enemy.possibleMoves = simulatedBoard._getValidMoves(enemy, simulatedBoard.pieces);
 
           if (enemy.isPawn) {
             if (enemy.possibleMoves.some((m) => m.x !== enemy.position.x && m.isSamePosition(clonedKing.position))) {
@@ -100,7 +100,7 @@ export class Board {
     }
   }
 
-  private getValidMoves(piece: Piece, boardState: Piece[]): Position[] {
+  private _getValidMoves(piece: Piece, boardState: Piece[]): Position[] {
     switch (piece.type) {
       case PieceType.PAWN:
         return getPossiblePawnMoves(piece, boardState, this.fen.enPassantSquare);
@@ -234,7 +234,7 @@ export class Board {
     }
 
     // Update total turns, last move played and calculate next possible moves
-    this.totalTurns += 1;
+    this._totalTurns += 1;
     this.fen = this.fen.update({ boardstate: this.pieces, toMove: this.currentTeam });
     this.lastMove = new Move(playedPiece.position, destination);
     this.calculateAllMoves();
@@ -243,6 +243,6 @@ export class Board {
   }
 
   clone(): Board {
-    return new Board(this.fen.toString(), this.totalTurns, this.lastMove?.clone());
+    return new Board(this.fen.toString(), this._totalTurns, this.lastMove?.clone());
   }
 }
