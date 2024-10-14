@@ -7,8 +7,8 @@ import { HORIZONTAL_AXIS, PIECES_MAP, VERTICAL_AXIS } from '@/constants';
 export class Fen {
   static readonly startingPosition = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   static readonly emptyPosition = '8/8/8/8/8/8/8/8 w KQkq - 0 1';
-  static readonly debugCastling = 'r3k2r/p1pp1ppp/b1nb1q1n/1p2p3/1P2P3/B1NB1Q1N/P1PP1PPP/R3K2R b KQkq - 0 1';
-  static readonly debugEnPassant = 'rnbqkbnr/ppp1p1pp/5p2/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 1';
+  static readonly debugCastling = 'r3k2r/p1pp1ppp/bpnb1q1n/4p3/4P3/BPNB1Q1N/P1PP1PPP/2R1K2R b Kkq - 5 8';
+  static readonly debugEnPassant = 'rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3';
 
   readonly boardstate: Piece[];
   readonly toMove: TeamType;

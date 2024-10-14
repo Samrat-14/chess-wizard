@@ -18,10 +18,10 @@ export class Board {
   pieces: Piece[];
   winningTeam?: TeamType;
 
-  constructor(fenStr: string = Fen.emptyPosition, totalTurns: number = 0, lastMove?: Move) {
+  constructor(fenStr: string = Fen.emptyPosition, totalTurns?: number, lastMove?: Move) {
     this.fen = new Fen(fenStr);
     this.pieces = this.fen.boardstate.map((p) => p.clone());
-    this._totalTurns = totalTurns;
+    this._totalTurns = totalTurns ?? (this.fen.toMove === TeamType.WHITE ? 0 : 1);
     this._lastMove = lastMove;
   }
 
