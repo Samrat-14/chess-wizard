@@ -16,6 +16,7 @@ import '@/styles/referee.css';
 export default function Referee() {
   // Custom hook to manage FEN in local storage
   const [storedFen, setStoredFen] = useLocalStorage<string>('fen', Fen.emptyPosition);
+  const [storedLastMoveObj, setStoredLastMoveObj] = useLocalStorage<Move>('last-move', Move.nullMove());
 
   // States to store boardstate & promotion pawn during the game
   const [board, setBoard] = useState<Board>(new Board());
@@ -34,8 +35,10 @@ export default function Referee() {
 
   // Initially, set the board from the stored value of FEN from local storage
   useEffect(() => {
+    const parsedStoredLastMove = Move.parse(storedLastMoveObj);
+
     setBoard(() => {
-      const initialBoard = new Board(storedFen);
+      const initialBoard = new Board(storedFen, parsedStoredLastMove);
       initialBoard.calculateAllMoves();
 
       return initialBoard;
@@ -46,6 +49,7 @@ export default function Referee() {
   useEffect(() => {
     // console.log(board.fen.toString());
     setStoredFen(board.fen.toString());
+    setStoredLastMoveObj(board.getLastMove);
   }, [board]);
 
   const switchPlayers = () => {

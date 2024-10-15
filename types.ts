@@ -29,3 +29,13 @@ export type FenArgs = {
   halfMoves: number;
   fullMoves: number;
 };
+
+export type PositionType = {
+  x: number;
+  y: number;
+};
+
+export type MoveType = {
+  initialPosition: PositionType;
+  finalPosition: PositionType;
+};

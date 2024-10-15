@@ -1,3 +1,5 @@
+import { PositionType } from '@/types';
+
 export class Position {
   x: number;
   y: number;
@@ -9,6 +11,10 @@ export class Position {
 
   static nullPosition(): Position {
     return new Position(-1, -1);
+  }
+
+  static parse(positionObj: PositionType): Position {
+    return new Position(positionObj.x, positionObj.y);
   }
 
   isSamePosition(otherPosition: Position): boolean {

@@ -1,3 +1,4 @@
+import { MoveType } from '@/types';
 import { Position } from './position';
 
 export class Move {
@@ -11,6 +12,10 @@ export class Move {
 
   static nullMove(): Move {
     return new Move(new Position(-1, -1), new Position(-1, -1));
+  }
+
+  static parse(moveObj: MoveType): Move {
+    return new Move(Position.parse(moveObj.initialPosition), Position.parse(moveObj.finalPosition));
   }
 
   includesPosition(position: Position): boolean {
