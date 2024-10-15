@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const useRandom = (max: number, min: number = 0) => {
+const useRandom = (max: number, min: number = 0): number => {
   const [randomNumber, setRandomNumber] = useState<number>(min);
 
   useEffect(() => {

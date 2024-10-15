@@ -1,4 +1,5 @@
-[ ] feature: game state should be saved in local storage
+[ ] bug fix: avatar doen not change on board rotate
+
 [ ] feature: load FEN and play
 [ ] feature: generate FEN of current boardstate
 [ ] feature: add animation for movement
@@ -39,3 +40,4 @@
 [*] feature: implement FEN of half moves
 [*] feature: implement FEN of full moves
 [*] feature: highlight hovered tile with piece selected
+[*] feature: game state should be saved in local storage

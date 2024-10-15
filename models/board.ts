@@ -13,24 +13,24 @@ import { Piece, Position, Move, Fen } from '@/models';
 
 export class Board {
   private _totalTurns: number;
-  private _lastMove: Move | undefined;
+  private _lastMove: Move;
   fen: Fen;
   pieces: Piece[];
   winningTeam?: TeamType;
   winCondition?: 'Checkmate' | 'Stalemate' | 'Resignation';
 
-  constructor(fenStr: string = Fen.emptyPosition, totalTurns?: number, lastMove?: Move) {
+  constructor(fenStr: string = Fen.emptyPosition, lastMove?: Move, totalTurns?: number) {
     this.fen = new Fen(fenStr);
     this.pieces = this.fen.boardstate.map((p) => p.clone());
     this._totalTurns = totalTurns ?? (this.fen.toMove === TeamType.WHITE ? 0 : 1);
-    this._lastMove = lastMove;
+    this._lastMove = lastMove ?? Move.nullMove();
   }
 
   get currentTeam(): TeamType {
     return this._totalTurns % 2 === 0 ? TeamType.WHITE : TeamType.BLACK;
   }
 
-  get getLastMove(): Move | undefined {
+  get getLastMove(): Move {
     return this._lastMove;
   }
 
@@ -294,6 +294,6 @@ export class Board {
   }
 
   clone(): Board {
-    return new Board(this.fen.toString(), this._totalTurns, this._lastMove?.clone());
+    return new Board(this.fen.toString(), this._lastMove?.clone(), this._totalTurns);
   }
 }

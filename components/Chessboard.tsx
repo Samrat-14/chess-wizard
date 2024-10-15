@@ -14,7 +14,7 @@ type ChessboardProps = {
   playMove: (piece: Piece, position: Position) => boolean;
   pieces: Piece[];
   turn?: TeamType;
-  lastMovePlayed?: Move;
+  lastMovePlayed: Move;
 };
 
 export default forwardRef(function Chessboard(

@@ -7,24 +7,46 @@ import Chessboard from '@/components/Chessboard';
 import Playertag from '@/components/Playertag';
 import Modal from '@/components/ui/Modal';
 
+import useLocalStorage from '@/hooks/useLocalStorage';
 import { PieceType, TeamType } from '@/types';
-import { Board, Fen, Piece, Position } from '@/models';
+import { Board, Fen, Move, Piece, Position } from '@/models';
 
 import '@/styles/referee.css';
 
 export default function Referee() {
+  // Custom hook to manage FEN in local storage
+  const [storedFen, setStoredFen] = useLocalStorage<string>('fen', Fen.emptyPosition);
+
+  // States to store boardstate & promotion pawn during the game
   const [board, setBoard] = useState<Board>(new Board());
   const [promotionPawn, setPromotionPawn] = useState<Piece>();
+
+  // Refs for boardstate & different modals
   const chessboardRef = useRef<HTMLDivElement>(null);
   const promotionModalRef = useRef<HTMLDivElement>(null);
   const gameOverModalRef = useRef<HTMLDivElement>(null);
   const startGameModalRef = useRef<HTMLDivElement>(null);
 
-  // Game settings
+  // States for other game settings
   const [boardRotates, setBoardRotates] = useState(false);
-
   const [playerWhite, setPlayerWhite] = useState('You');
   const [playerBlack, setPlayerBlack] = useState('Opponent');
+
+  // Initially, set the board from the stored value of FEN from local storage
+  useEffect(() => {
+    setBoard(() => {
+      const initialBoard = new Board(storedFen);
+      initialBoard.calculateAllMoves();
+
+      return initialBoard;
+    });
+  }, []);
+
+  // Whenever boardstate changes, update the FEN in the local storage
+  useEffect(() => {
+    // console.log(board.fen.toString());
+    setStoredFen(board.fen.toString());
+  }, [board]);
 
   const switchPlayers = () => {
     setPlayerWhite((prev) => (prev === 'You' ? 'Opponent' : 'You'));
@@ -53,7 +75,7 @@ export default function Referee() {
 
       // Check if player won after each played move
       if (clonedBoard.winCondition) {
-        gameOverModalRef.current?.classList.remove('hidden');
+        unHideModal(gameOverModalRef);
       }
 
       return clonedBoard;
@@ -63,7 +85,7 @@ export default function Referee() {
     const promotionRow = playedPiece.team === TeamType.WHITE ? 7 : 0;
 
     if (destination.y === promotionRow && playedPiece.isPawn) {
-      promotionModalRef.current?.classList.remove('hidden');
+      unHideModal(promotionModalRef);
 
       const chessboard = chessboardRef.current;
       if (chessboard) {
@@ -138,13 +160,13 @@ export default function Referee() {
 
       // Check if player won just after pawn promotion
       if (clonedBoard.winCondition) {
-        gameOverModalRef.current?.classList.remove('hidden');
+        unHideModal(gameOverModalRef);
       }
 
       return clonedBoard;
     });
 
-    promotionModalRef.current?.classList.add('hidden');
+    hideModal(promotionModalRef);
   };
 
   const promotionPieceImage = (promotionPieceType: PieceType) => {
@@ -153,15 +175,15 @@ export default function Referee() {
     return `assets/images/${promotionPieceType}_${promotionTeamType}.png`;
   };
 
-  const restartGame = () => {
-    gameOverModalRef.current?.classList.add('hidden');
+  const startNewGame = () => {
+    hideModal(gameOverModalRef);
     setBoard(new Board());
-    startGameModalRef.current?.classList.remove('hidden');
+    unHideModal(startGameModalRef);
   };
 
   const startGame = () => {
-    gameOverModalRef.current?.classList.add('hidden');
-    startGameModalRef.current?.classList.add('hidden');
+    hideModal(gameOverModalRef);
+    hideModal(startGameModalRef);
     setBoard(() => {
       const initialBoard = new Board(Fen.startingPosition);
       initialBoard.calculateAllMoves();
@@ -178,12 +200,16 @@ export default function Referee() {
 
       return clonedBoard;
     });
-    gameOverModalRef.current?.classList.remove('hidden');
+    unHideModal(gameOverModalRef);
   };
 
-  useEffect(() => {
-    console.log(board.fen.toString());
-  }, [board]);
+  const hideModal = (modalRef: React.RefObject<HTMLDivElement>): void => {
+    modalRef.current?.classList.add('hidden');
+  };
+
+  const unHideModal = (modalRef: React.RefObject<HTMLDivElement>): void => {
+    modalRef.current?.classList.remove('hidden');
+  };
 
   return (
     <>
@@ -206,7 +232,7 @@ export default function Referee() {
             <button className="btn-primary" onClick={startGame}>
               Rematch
             </button>
-            <button className="btn-primary" onClick={restartGame}>
+            <button className="btn-primary" onClick={startNewGame}>
               New Game
             </button>
           </div>
@@ -238,9 +264,16 @@ export default function Referee() {
               </label>
             </h4>
           </div>
-          <div className="m-4">
+          <div className="grid grid-cols-2 gap-4 m-4">
+            <button
+              className="btn-primary"
+              disabled={board.fen.toString() === Fen.emptyPosition}
+              onClick={() => hideModal(startGameModalRef)}
+            >
+              Continue
+            </button>
             <button className="btn-primary" onClick={startGame}>
-              Start game
+              New Game
             </button>
           </div>
         </div>

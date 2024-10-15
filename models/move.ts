@@ -9,6 +9,10 @@ export class Move {
     this.finalPosition = finalPosition;
   }
 
+  static nullMove(): Move {
+    return new Move(new Position(-1, -1), new Position(-1, -1));
+  }
+
   includesPosition(position: Position): boolean {
     return this.initialPosition.isSamePosition(position) || this.finalPosition.isSamePosition(position);
   }
