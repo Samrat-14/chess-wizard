@@ -52,7 +52,7 @@ export default function Referee() {
       playedMoveIsValid = clonedBoard.playMove(enPassantMove, playedPiece, destination);
 
       // Check if player won after each played move
-      if (clonedBoard.winningTeam) {
+      if (clonedBoard.winCondition) {
         gameOverModalRef.current?.classList.remove('hidden');
       }
 
@@ -137,7 +137,7 @@ export default function Referee() {
       clonedBoard.calculateAllMoves();
 
       // Check if player won just after pawn promotion
-      if (clonedBoard.winningTeam) {
+      if (clonedBoard.winCondition) {
         gameOverModalRef.current?.classList.remove('hidden');
       }
 
@@ -160,6 +160,7 @@ export default function Referee() {
   };
 
   const startGame = () => {
+    gameOverModalRef.current?.classList.add('hidden');
     startGameModalRef.current?.classList.add('hidden');
     setBoard(() => {
       const initialBoard = new Board(Fen.startingPosition);
@@ -173,6 +174,7 @@ export default function Referee() {
     setBoard(() => {
       const clonedBoard = board.clone();
       clonedBoard.winningTeam = clonedBoard.currentTeam === TeamType.WHITE ? TeamType.BLACK : TeamType.WHITE;
+      clonedBoard.winCondition = 'Resignation';
 
       return clonedBoard;
     });
@@ -196,10 +198,18 @@ export default function Referee() {
       {/* Game Over Modal */}
       <Modal ref={gameOverModalRef} type="popup-modal" hidden>
         <div className="modal-body">
-          <h2 className="uppercase">{board.winningTeam === TeamType.WHITE ? 'white' : 'black'} wins!</h2>
-          <button className="btn-primary" onClick={restartGame}>
-            Play again
-          </button>
+          <h2 className="uppercase">
+            {board.winningTeam ? (board.winningTeam === TeamType.WHITE ? 'white wins!' : 'black wins!') : 'draw'}
+          </h2>
+          <p>by {board.winCondition}</p>
+          <div className="grid grid-cols-2 gap-4 m-4">
+            <button className="btn-primary" onClick={startGame}>
+              Rematch
+            </button>
+            <button className="btn-primary" onClick={restartGame}>
+              New Game
+            </button>
+          </div>
         </div>
       </Modal>
 
@@ -208,27 +218,31 @@ export default function Referee() {
         <div className="modal-body">
           <h2>Pass and Play</h2>
           <p>Play with a friend offline</p>
-          <h4>
-            <span>White</span>
-            <span className="font-bold">{playerWhite}</span>
-          </h4>
-          <span id="toggle-team" onClick={switchPlayers}>
-            <Shuffle size={20} color="#ffffff" strokeWidth={2.5} />
-          </span>
-          <h4>
-            <span>Black</span>
-            <span className="font-bold">{playerBlack}</span>
-          </h4>
-          <h4>
-            <span>Board rotates</span>
-            <label className="toggle-checkbox">
-              <input type="checkbox" name="board-rotate" onChange={(e) => setBoardRotates(e.target.checked)} />
-              <span />
-            </label>
-          </h4>
-          <button className="btn-primary" onClick={startGame}>
-            Start game
-          </button>
+          <div className="mt-10">
+            <h4>
+              <span>White</span>
+              <span className="font-bold">{playerWhite}</span>
+            </h4>
+            <span id="toggle-team" onClick={switchPlayers}>
+              <Shuffle size={20} color="#ffffff" strokeWidth={2.5} />
+            </span>
+            <h4>
+              <span>Black</span>
+              <span className="font-bold">{playerBlack}</span>
+            </h4>
+            <h4>
+              <span>Board rotates</span>
+              <label className="toggle-checkbox">
+                <input type="checkbox" name="board-rotate" onChange={(e) => setBoardRotates(e.target.checked)} />
+                <span />
+              </label>
+            </h4>
+          </div>
+          <div className="m-4">
+            <button className="btn-primary" onClick={startGame}>
+              Start game
+            </button>
+          </div>
         </div>
       </Modal>
 

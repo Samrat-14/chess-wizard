@@ -17,6 +17,7 @@ export class Board {
   fen: Fen;
   pieces: Piece[];
   winningTeam?: TeamType;
+  winCondition?: 'Checkmate' | 'Stalemate' | 'Resignation';
 
   constructor(fenStr: string = Fen.emptyPosition, totalTurns?: number, lastMove?: Move) {
     this.fen = new Fen(fenStr);
@@ -33,7 +34,7 @@ export class Board {
     return this._lastMove;
   }
 
-  calculateAllMoves() {
+  calculateAllMoves(): void {
     // Set possible valid moves
     for (const piece of this.pieces) {
       piece.possibleMoves = this._getValidMoves(piece, this.pieces);
@@ -57,17 +58,29 @@ export class Board {
       piece.possibleMoves = [];
     }
 
-    // Check if current team still have valid moves left, otherwise Checkmate
+    // Check if current team still have valid moves left, otherwise game over
     if (
       this.pieces.filter((p) => p.team === this.currentTeam).some((p) => p.possibleMoves && p.possibleMoves.length > 0)
     )
       return;
 
-    // Checkmated! Set the winning team
-    this.winningTeam = this.currentTeam === TeamType.WHITE ? TeamType.BLACK : TeamType.WHITE;
+    // Now we know that there is no possible valid moves left for current team
+    // So, either it's checkmate or stalemate
+
+    const isCheckmated = this._isKingInCheck(this);
+
+    // Set the win condition
+    if (isCheckmated) {
+      // Set the winning team
+      this.winningTeam = this.currentTeam === TeamType.WHITE ? TeamType.BLACK : TeamType.WHITE;
+
+      this.winCondition = 'Checkmate';
+    } else {
+      this.winCondition = 'Stalemate';
+    }
   }
 
-  private _checkCurrentTeamMoves() {
+  private _checkCurrentTeamMoves(): void {
     // Loop through all the current team's pieces
     for (const piece of this.pieces.filter((p) => p.team === this.currentTeam)) {
       if (!piece.possibleMoves) continue;
@@ -83,26 +96,37 @@ export class Board {
         const clonedPiece = simulatedBoard.pieces.find((p) => p.isSamePiecePosition(piece))!;
         clonedPiece.position = possibleMove.clone();
 
-        //  Get the King of the clone board
-        const clonedKing = simulatedBoard.pieces.find((p) => p.isKing && p.team === simulatedBoard.currentTeam)!;
-
-        // Loop through all enemy pieces, update their possible moves
-        // And check if the current team's King will be in danger
-        for (const enemy of simulatedBoard.pieces.filter((p) => p.team !== simulatedBoard.currentTeam)) {
-          enemy.possibleMoves = simulatedBoard._getValidMoves(enemy, simulatedBoard.pieces);
-
-          if (enemy.isPawn) {
-            if (enemy.possibleMoves.some((m) => m.x !== enemy.position.x && m.isSamePosition(clonedKing.position))) {
-              piece.possibleMoves = piece.possibleMoves.filter((m) => !m.isSamePosition(possibleMove));
-            }
-          } else {
-            if (enemy.possibleMoves.some((m) => m.isSamePosition(clonedKing.position))) {
-              piece.possibleMoves = piece.possibleMoves.filter((m) => !m.isSamePosition(possibleMove));
-            }
-          }
+        // Check if the current team's king will be in danger with the simulated move
+        if (this._isKingInCheck(simulatedBoard)) {
+          // Remove the simulated move from the list of possible moves
+          piece.possibleMoves = piece.possibleMoves.filter((m) => !m.isSamePosition(possibleMove));
         }
       }
     }
+  }
+
+  private _isKingInCheck(board: Board): boolean {
+    //  Get the King of the given board
+    const clonedKing = board.pieces.find((p) => p.isKing && p.team === board.currentTeam)!;
+
+    // Loop through all enemy pieces
+    for (const enemy of board.pieces.filter((p) => p.team !== board.currentTeam)) {
+      // Get possible moves for the enemy piece
+      enemy.possibleMoves = board._getValidMoves(enemy, board.pieces);
+
+      // Check if king is under attack
+      if (enemy.isPawn) {
+        if (enemy.possibleMoves.some((m) => m.x !== enemy.position.x && m.isSamePosition(clonedKing.position))) {
+          return true;
+        }
+      } else {
+        if (enemy.possibleMoves.some((m) => m.isSamePosition(clonedKing.position))) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   private _getValidMoves(piece: Piece, boardState: Piece[]): Position[] {

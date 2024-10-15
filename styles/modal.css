@@ -56,32 +56,32 @@
   }
 
   @media screen and (max-width: 480px) {
-    width: 99%;
+    width: 90%;
   }
 }
 
 .modal-overlay > .popup-modal .modal-body {
   z-index: 1;
   font-size: 1rem;
+  width: 100%;
 
   & h2 {
     font-size: 1.75rem;
     font-weight: bold;
     text-align: center;
-    margin: 4vmin 16vmin;
-    margin-bottom: 6vmin;
+    margin: 1rem 15vmin;
     text-wrap: nowrap;
   }
 
   & p {
+    color: #ccc;
     text-align: center;
-    margin: 2vmin auto;
   }
 
   & h4 {
     background-color: var(--bg-color-light);
     border-bottom: 2px solid var(--bg-color);
-    padding: 2vmin 3vmin;
+    padding: 1rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -101,28 +101,8 @@
   }
 
   & button {
-    margin: 3vmin auto;
-    margin-top: 10vmin;
-    width: 90%;
-    font-size: clamp(1rem, 2.5vmin, 1.5rem);
-  }
-
-  @media screen and (max-width: 480px) {
     width: 100%;
-
-    & h2 {
-      margin: 2rem auto;
-      margin-bottom: 4rem;
-    }
-
-    & h4 {
-      padding: 1rem 1.5rem;
-    }
-
-    & button {
-      margin: 1rem auto;
-      margin-top: 6rem;
-      width: 95%;
-    }
+    margin-top: 4rem;
+    font-size: clamp(1rem, 2.5vmin, 1.5rem);
   }
 }

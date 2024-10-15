@@ -1,8 +1,6 @@
-
-[ ] bug fix: stalemate should show Draw
-
 [ ] feature: game state should be saved in local storage
 [ ] feature: load FEN and play
+[ ] feature: generate FEN of current boardstate
 [ ] feature: add animation for movement
 [ ] feature: add sound effects
 [ ] feature: implement move list
@@ -24,6 +22,7 @@
 
 [*] bug fix: castling should not be possible if King is in check
 [*] bug fix: castling should be possible even if tile beside queen side rook is in check
+[*] bug fix: stalemate should show Draw
 
 [*] feature: implement click functionality for playing
 [*] feature: highlight selected tile with piece 

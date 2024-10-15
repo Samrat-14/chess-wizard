@@ -9,6 +9,8 @@ export class Fen {
   static readonly emptyPosition = '8/8/8/8/8/8/8/8 w KQkq - 0 1';
   static readonly debugCastling = 'r3k2r/p1pp1ppp/bpnb1q1n/4p3/4P3/BPNB1Q1N/P1PP1PPP/2R1K2R b Kkq - 5 8';
   static readonly debugEnPassant = 'rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3';
+  static readonly debugCheckmate = '2k5/5R2/4R3/8/8/8/4K3/8 w - - 0 1';
+  static readonly debugStalemate = 'k7/3Q4/8/8/2K5/8/8/8 w - - 0 1';
 
   readonly boardstate: Piece[];
   readonly toMove: TeamType;
