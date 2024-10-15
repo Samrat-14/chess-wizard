@@ -22,27 +22,36 @@ export default forwardRef(function Chessboard(
   ref: Ref<HTMLDivElement>
 ) {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
-  const [grabPosition, setGrabPosition] = useState<Position>(new Position(-1, -1));
+  const [grabPosition, setGrabPosition] = useState<Position>(Position.nullPosition);
+  const [hoverWithPiecePosition, setHoverWithPiecePosition] = useState<Position>(Position.nullPosition);
   const [activeSelectedPiece, setActiveSelectedPiece] = useState<HTMLElement | null>(null);
-  const [selectedPosition, setSelectedPosition] = useState<Position>(new Position(-1, -1));
+  const [selectedPosition, setSelectedPosition] = useState<Position>(Position.nullPosition);
   const chessboardRef = ref as RefObject<HTMLDivElement>;
+
+  const _getMouseCoordinatesOnBoard = (e: React.MouseEvent, chessboard: HTMLDivElement): Position => {
+    // Find (x, y) on board where clicked
+    const tileX = Math.floor((e.clientX - chessboard.offsetLeft) / (chessboard.clientWidth / 8));
+    const tileY = Math.abs(
+      Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
+    );
+
+    // Toggle position coordinates based on turn
+    const xPos = turn && turn === TeamType.BLACK ? 7 - tileX : tileX;
+    const yPos = turn && turn === TeamType.BLACK ? 7 - tileY : tileY;
+
+    return new Position(xPos, yPos);
+  };
 
   const clickPiece = (e: React.MouseEvent) => {
     const element = e.target as HTMLElement;
     const chessboard = chessboardRef.current;
 
     if (chessboard) {
-      const clickX = Math.floor((e.clientX - chessboard.offsetLeft) / (chessboard.clientWidth / 8));
-      const clickY = Math.abs(
-        Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
-      );
-
-      // Toggle position coordinates based on turn
-      const xPos = turn && turn === TeamType.BLACK ? 7 - clickX : clickX;
-      const yPos = turn && turn === TeamType.BLACK ? 7 - clickY : clickY;
+      // Find (x, y) on board where clicked
+      const clickPosition = _getMouseCoordinatesOnBoard(e, chessboard);
 
       // Check if click start position is same as click end position
-      const isProperClick = grabPosition.isSamePosition(new Position(xPos, yPos));
+      const isProperClick = grabPosition.isSamePosition(clickPosition);
 
       // Check if a piece was selected
       if (activeSelectedPiece) {
@@ -56,11 +65,11 @@ export default forwardRef(function Chessboard(
         const selectedPiece = pieces.find((p) => p.isSamePosition(selectedPosition));
         if (selectedPiece) {
           // Check if the played move is valid
-          const success = playMove(selectedPiece.clone(), new Position(xPos, yPos));
+          const success = playMove(selectedPiece.clone(), clickPosition.clone());
 
           // If move is invalid, but another piece is properly clicked, select it
           if (!success && element.classList.contains('chess-piece') && isProperClick) {
-            setSelectedPosition(new Position(xPos, yPos));
+            setSelectedPosition(clickPosition);
             setActiveSelectedPiece(element);
 
             return;
@@ -72,7 +81,7 @@ export default forwardRef(function Chessboard(
       } else {
         // No piece was selected, so if there is a piece & proper click, grab it
         if (element.classList.contains('chess-piece') && isProperClick) {
-          setSelectedPosition(new Position(xPos, yPos));
+          setSelectedPosition(clickPosition);
           setActiveSelectedPiece(element);
         }
       }
@@ -84,16 +93,10 @@ export default forwardRef(function Chessboard(
     const chessboard = chessboardRef.current;
 
     if (element.classList.contains('chess-piece') && chessboard) {
-      const grabX = Math.floor((e.clientX - chessboard.offsetLeft) / (chessboard.clientWidth / 8));
-      const grabY = Math.abs(
-        Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
-      );
+      // Find (x, y) on board where the piece is grabbed
+      const grabbedPosition = _getMouseCoordinatesOnBoard(e, chessboard);
 
-      // Toggle position coordinates based on turn
-      const xPos = turn && turn === TeamType.BLACK ? 7 - grabX : grabX;
-      const yPos = turn && turn === TeamType.BLACK ? 7 - grabY : grabY;
-
-      setGrabPosition(new Position(xPos, yPos));
+      setGrabPosition(grabbedPosition);
 
       const x = e.clientX;
       const y = e.clientY;
@@ -110,6 +113,10 @@ export default forwardRef(function Chessboard(
   const movePiece = (e: React.MouseEvent) => {
     const chessboard = chessboardRef.current;
     if (activePiece && chessboard) {
+      // Find (x, y) on board where the piece is hovered
+      const hoverPosition = _getMouseCoordinatesOnBoard(e, chessboard);
+      setHoverWithPiecePosition(hoverPosition);
+
       const minX = chessboard.offsetLeft + 0.05 * chessboard.clientWidth;
       const minY = chessboard.offsetTop + 0.05 * chessboard.clientHeight;
       const maxX = chessboard.offsetLeft + chessboard.clientWidth - 0.05 * chessboard.clientWidth;
@@ -121,6 +128,9 @@ export default forwardRef(function Chessboard(
       activePiece.style.translate = '-50% -50%';
       activePiece.style.left = x < minX ? `${minX}px` : x > maxX ? `${maxX}px` : `${x}px`;
       activePiece.style.top = y < minY ? `${minY}px` : y > maxY ? `${maxY}px` : `${y}px`;
+    } else {
+      // Reset (x, y) to (-1, -1)
+      setHoverWithPiecePosition(Position.nullPosition);
     }
   };
 
@@ -128,21 +138,14 @@ export default forwardRef(function Chessboard(
     const chessboard = chessboardRef.current;
 
     if (activePiece && chessboard) {
-      // Find (x, y) where the piece is dropped
-      const dropX = Math.floor((e.clientX - chessboard.offsetLeft) / (chessboard.clientWidth / 8));
-      const dropY = Math.abs(
-        Math.ceil((e.clientY - chessboard.offsetTop - chessboard.clientHeight) / (chessboard.clientHeight / 8))
-      );
-
-      // Toggle position coordinates based on turn
-      const xPos = turn && turn === TeamType.BLACK ? 7 - dropX : dropX;
-      const yPos = turn && turn === TeamType.BLACK ? 7 - dropY : dropY;
+      // Find (x, y) on board where the piece is dropped
+      const dropPosition = _getMouseCoordinatesOnBoard(e, chessboard);
 
       const currentPiece = pieces.find((p) => p.isSamePosition(grabPosition));
 
       if (currentPiece) {
         // Check if the played move is valid
-        playMove(currentPiece.clone(), new Position(xPos, yPos));
+        playMove(currentPiece.clone(), dropPosition.clone());
 
         // Resets the piece position tp snap at place
         activePiece.style.position = 'relative';
@@ -180,6 +183,12 @@ export default forwardRef(function Chessboard(
       // If tile is selected, highlight it
       const isTileSelected = currentPiece ? currentPiece.isSamePosition(new Position(xPos, yPos)) : false;
 
+      // If tile is hovered with piece selected, highlight it
+      const isTileHoveredWithPiece =
+        currentPiece && hoverWithPiecePosition
+          ? hoverWithPiecePosition.isSamePosition(new Position(xPos, yPos))
+          : false;
+
       // If tile is in last move, highlight it
       const isTileInLastMovePlayed = lastMovePlayed ? lastMovePlayed.includesPosition(new Position(xPos, yPos)) : false;
 
@@ -192,6 +201,7 @@ export default forwardRef(function Chessboard(
           image={image}
           marked={isTileInPossibleMoves}
           highlighted={isTileSelected || isTileInLastMovePlayed}
+          hoveredWithPiece={isTileHoveredWithPiece}
         />
       );
     }

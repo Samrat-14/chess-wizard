@@ -56,6 +56,10 @@
     }
   }
 
+  &.tile-hover {
+    box-shadow: inset 0 0 0 0.3rem var(--tertiary-color);
+  }
+
   &.tile-mark:not(.chess-piece-tile)::before {
     content: '';
     position: absolute;

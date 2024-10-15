@@ -11,15 +11,17 @@ type TileProps = {
   image?: string;
   marked: boolean;
   highlighted: boolean;
+  hoveredWithPiece: boolean;
 };
 
-export default function Tile({ xPos, yPos, turn, image, marked, highlighted }: TileProps) {
+export default function Tile({ xPos, yPos, turn, image, marked, highlighted, hoveredWithPiece }: TileProps) {
   const className: string = [
     'tile',
     (xPos + yPos) % 2 === 0 && 'black-tile',
     (xPos + yPos) % 2 !== 0 && 'white-tile',
     marked && 'tile-mark',
     highlighted && 'tile-highlight',
+    hoveredWithPiece && 'tile-hover',
     image && 'chess-piece-tile',
   ]
     .filter(Boolean)

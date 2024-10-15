@@ -7,6 +7,10 @@ export class Position {
     this.y = y;
   }
 
+  static nullPosition(): Position {
+    return new Position(-1, -1);
+  }
+
   isSamePosition(otherPosition: Position): boolean {
     return this.x === otherPosition.x && this.y === otherPosition.y;
   }

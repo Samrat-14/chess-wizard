@@ -6,7 +6,6 @@
 [ ] feature: implement move list
 [ ] feature: add move notations
 
-[ ] archive: highlight hovered tile with piece selected
 [ ] archive: implement timer
 
 
@@ -39,3 +38,4 @@
 [*] feature: implement FEN of enPassant
 [*] feature: implement FEN of half moves
 [*] feature: implement FEN of full moves
+[*] feature: highlight hovered tile with piece selected
