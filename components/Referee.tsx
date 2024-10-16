@@ -6,6 +6,7 @@ import { Shuffle } from 'lucide-react';
 import Chessboard from '@/components/Chessboard';
 import Playertag from '@/components/Playertag';
 import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
 
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { PieceType, TeamType } from '@/types';
@@ -233,12 +234,12 @@ export default function Referee() {
           </h2>
           <p>by {board.winCondition}</p>
           <div className="grid grid-cols-2 gap-4 m-4">
-            <button className="btn-primary" onClick={startGame}>
+            <Button variant="clashofclans" onClick={startGame}>
               Rematch
-            </button>
-            <button className="btn-primary" onClick={startNewGame}>
+            </Button>
+            <Button variant="clashofclans" onClick={startNewGame}>
               New Game
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
@@ -269,16 +270,16 @@ export default function Referee() {
             </h4>
           </div>
           <div className="grid grid-cols-2 gap-4 m-4">
-            <button
-              className="btn-primary"
+            <Button
+              variant="clashofclans"
               disabled={board.fen.toString() === Fen.emptyPosition}
               onClick={() => hideModal(startGameModalRef)}
             >
               Continue
-            </button>
-            <button className="btn-clashofclans" onClick={startGame}>
+            </Button>
+            <Button variant="clashofclans" onClick={startGame}>
               New Game
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
@@ -296,9 +297,11 @@ export default function Referee() {
       </main>
 
       {board.pieces.length > 0 && (
-        <button className="btn-primary absolute top-1 right-1" onClick={resignGame}>
-          Resign
-        </button>
+        <div className="absolute top-1 right-1">
+          <Button variant="clashofclans" onClick={resignGame}>
+            Resign
+          </Button>
+        </div>
       )}
     </>
   );
