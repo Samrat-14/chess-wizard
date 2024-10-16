@@ -62,7 +62,7 @@
 
 .modal-overlay > .popup-modal .modal-body {
   z-index: 1;
-  font-size: 1rem;
+  font-size: 0.875rem;
   width: 100%;
 
   & h2 {

@@ -1,5 +1,5 @@
-import useRandom from '@/hooks/useRandom';
-import { USER_PHOTOS } from '@/constants';
+// import useRandom from '@/hooks/useRandom';
+// import { USER_PHOTOS } from '@/constants';
 
 import '@/styles/playertag.css';
 
@@ -8,11 +8,13 @@ type PlayertagProps = {
 };
 
 export default function Playertag({ playerName }: PlayertagProps) {
-  const randomUserImageIndex = useRandom(USER_PHOTOS.length - 1);
+  // const randomUserImageIndex = useRandom(USER_PHOTOS.length - 1);
 
-  const userImageSrc = USER_PHOTOS[randomUserImageIndex]
-    ? `/assets/people/user/${USER_PHOTOS[randomUserImageIndex]}.png`
-    : '/assets/people/default_user.png';
+  // const userImageSrc = USER_PHOTOS[randomUserImageIndex]
+  //   ? `/assets/people/user/${USER_PHOTOS[randomUserImageIndex]}.png`
+  //   : '/assets/people/default_user.png';
+
+  const userImageSrc = '/assets/people/default_user.png';
 
   return (
     <div className="player-tag">

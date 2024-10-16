@@ -276,7 +276,7 @@ export default function Referee() {
             >
               Continue
             </button>
-            <button className="btn-primary" onClick={startGame}>
+            <button className="btn-clashofclans" onClick={startGame}>
               New Game
             </button>
           </div>
