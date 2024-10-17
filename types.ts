@@ -39,3 +39,13 @@ export type MoveType = {
   initialPosition: PositionType;
   finalPosition: PositionType;
 };
+
+export type SoundType =
+  | 'capture'
+  | 'castle'
+  | 'game-end'
+  | 'game-start'
+  | 'illegal'
+  | 'move-opponent'
+  | 'move-self'
+  | 'promote';

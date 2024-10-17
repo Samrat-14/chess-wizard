@@ -1,13 +1,15 @@
-[ ] bug fix: avatar doen not change on board rotate
+[ ] bug fix: pawn promotion bug on reload
+[ ] bug fix: avatar does not change on board rotate
 
+[ ] feature: show Options button to change config of game
 [ ] feature: load FEN and play
 [ ] feature: generate FEN of current boardstate
-[ ] feature: add animation for movement
-[ ] feature: add sound effects
+[ ] feature: show captured pieces under respective usernames
 [ ] feature: implement move list
 [ ] feature: add move notations
 
 [ ] archive: implement timer
+[ ] archive: add animation for movement
 
 
 
@@ -41,3 +43,4 @@
 [*] feature: implement FEN of full moves
 [*] feature: highlight hovered tile with piece selected
 [*] feature: game state should be saved in local storage
+[*] feature: add sound effects

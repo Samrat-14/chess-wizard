@@ -10,6 +10,7 @@ import {
 } from '@/referee/rules';
 import { CastlingRight, PieceType, TeamType } from '@/types';
 import { Piece, Position, Move, Fen } from '@/models';
+import { playSound } from '@/utils/helper';
 
 export class Board {
   private _totalTurns: number;
@@ -66,6 +67,9 @@ export class Board {
 
     // Now we know that there is no possible valid moves left for current team
     // So, either it's checkmate or stalemate
+
+    // Play sound for game over
+    playSound('game-end');
 
     const isCheckmated = this._isKingInCheck(this);
 
@@ -148,7 +152,7 @@ export class Board {
     }
   }
 
-  playMove(enPassantMove: boolean, playedPiece: Piece, destination: Position): boolean {
+  playMove(enPassantMove: boolean, playedPiece: Piece, destination: Position): void {
     const pawnDirection = playedPiece.team === TeamType.WHITE ? 1 : -1;
 
     // Move is Castling, so played piece has to be king
@@ -174,6 +178,9 @@ export class Board {
 
         return p;
       });
+
+      // Play sound for castling
+      playSound('castle');
 
       const noCastlingRight: CastlingRight = { queenside: false, kingside: false };
       // Castling is done, so there should be no castling rights
@@ -203,6 +210,9 @@ export class Board {
         return results;
       }, [] as Piece[]);
 
+      // Play sound for capture (enPassant is a capturing move)
+      playSound('capture');
+
       // Update FEN to clear enPassantSquare
       this.fen = this.fen.update({ enPassantSquare: null });
     }
@@ -223,17 +233,37 @@ export class Board {
             this.fen = this.fen.update({ enPassantSquare: null });
           }
 
+          const isCapturingMove = isTileOccupiedByOpponent(destination, this.pieces, piece.team);
           // Reset halfmoves due to pawn advance or piece capture, increment otherwise
           // NOTE: halfmoves should be updated before playedpiece position is updated
-          if (piece.isPawn || isTileOccupiedByOpponent(destination, this.pieces, piece.team)) {
+          if (piece.isPawn || isCapturingMove) {
             this.fen = this.fen.update({ halfMoves: 0 });
           } else {
             this.fen = this.fen.update({ halfMoves: this.fen.halfMoves + 1 });
           }
 
+          // File for promoting a pawn
+          const promotionFile = piece.team === TeamType.WHITE ? 7 : 0;
+
           // Update position for the played piece
           piece.position.x = destination.x;
           piece.position.y = destination.y;
+
+          // Check if pawn promotion is going to happen
+          if (destination.y !== promotionFile || !piece.isPawn) {
+            // Sound of promote will be played in promotePawn() in Reference.tsx
+            if (isCapturingMove) {
+              // Play sound for capture move
+              playSound('capture');
+            } else {
+              // Play sound for normal move
+              if (this.currentTeam === TeamType.WHITE) {
+                playSound('move-self');
+              } else if (this.currentTeam === TeamType.BLACK) {
+                playSound('move-opponent');
+              }
+            }
+          }
 
           // King is moved
           if (piece.isKing) {
@@ -289,8 +319,6 @@ export class Board {
 
     // Calculate next possible moves
     this.calculateAllMoves();
-
-    return true;
   }
 
   clone(): Board {

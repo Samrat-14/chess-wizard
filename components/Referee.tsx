@@ -11,6 +11,7 @@ import Button from '@/components/ui/Button';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { PieceType, TeamType } from '@/types';
 import { Board, Fen, Move, Piece, Position } from '@/models';
+import { hideModal, playSound, unHideModal } from '@/utils/helper';
 
 import '@/styles/referee.css';
 
@@ -34,21 +35,19 @@ export default function Referee() {
   const [playerWhite, setPlayerWhite] = useState('You');
   const [playerBlack, setPlayerBlack] = useState('Opponent');
 
+  // Flag to check if it's an active game
+  const isActiveGame = board.fen.toString() !== Fen.emptyPosition;
+
   // Initially, set the board from the stored value of FEN from local storage
   useEffect(() => {
     const parsedStoredLastMove = Move.parse(storedLastMoveObj);
 
-    setBoard(() => {
-      const initialBoard = new Board(storedFen, parsedStoredLastMove);
-      initialBoard.calculateAllMoves();
-
-      return initialBoard;
-    });
+    setBoard(new Board(storedFen, parsedStoredLastMove));
   }, []);
 
   // Whenever boardstate changes, update the FEN in the local storage
   useEffect(() => {
-    // console.log(board.fen.toString());
+    console.log(board.fen.toString());
     setStoredFen(board.fen.toString());
     setStoredLastMoveObj(board.getLastMove);
   }, [board]);
@@ -64,11 +63,14 @@ export default function Referee() {
     // Prevent inactive player from playing
     if (playedPiece.team !== board.currentTeam) return false;
 
-    let playedMoveIsValid = false;
-
     // If move is not present in possible moves, return false
     const validMove = playedPiece.possibleMoves?.some((m) => m.isSamePosition(destination));
-    if (!validMove) return false;
+    if (!validMove) {
+      // Play sound for illegal move
+      playSound('illegal');
+
+      return false;
+    }
 
     const enPassantMove = isEnPassantMove(playedPiece.position, destination, playedPiece.type, playedPiece.team);
 
@@ -76,7 +78,7 @@ export default function Referee() {
       const clonedBoard = board.clone();
 
       // Move is valid, so play the move
-      playedMoveIsValid = clonedBoard.playMove(enPassantMove, playedPiece, destination);
+      clonedBoard.playMove(enPassantMove, playedPiece, destination);
 
       // Check if player won after each played move
       if (clonedBoard.winCondition) {
@@ -110,7 +112,8 @@ export default function Referee() {
       });
     }
 
-    return playedMoveIsValid;
+    // Move is valid
+    return true;
   };
 
   const isEnPassantMove = (
@@ -166,6 +169,9 @@ export default function Referee() {
       // Check if player won just after pawn promotion
       if (clonedBoard.winCondition) {
         unHideModal(gameOverModalRef);
+      } else {
+        // Play sound for promotion
+        playSound('promote');
       }
 
       return clonedBoard;
@@ -186,11 +192,30 @@ export default function Referee() {
     unHideModal(startGameModalRef);
   };
 
+  const continueGame = () => {
+    hideModal(startGameModalRef);
+    setBoard(() => {
+      const clonedBoard = board.clone();
+      clonedBoard.calculateAllMoves();
+
+      // Check if game was already over
+      if (clonedBoard.winCondition) {
+        unHideModal(gameOverModalRef);
+      }
+
+      return clonedBoard;
+    });
+  };
+
   const startGame = () => {
     hideModal(gameOverModalRef);
     hideModal(startGameModalRef);
     setBoard(() => {
       const initialBoard = new Board(Fen.startingPosition);
+
+      // Play sound for game start
+      playSound('game-start');
+
       initialBoard.calculateAllMoves();
 
       return initialBoard;
@@ -206,14 +231,6 @@ export default function Referee() {
       return clonedBoard;
     });
     unHideModal(gameOverModalRef);
-  };
-
-  const hideModal = (modalRef: React.RefObject<HTMLDivElement>): void => {
-    modalRef.current?.classList.add('hidden');
-  };
-
-  const unHideModal = (modalRef: React.RefObject<HTMLDivElement>): void => {
-    modalRef.current?.classList.remove('hidden');
   };
 
   return (
@@ -270,11 +287,7 @@ export default function Referee() {
             </h4>
           </div>
           <div className="grid grid-cols-2 gap-4 m-4">
-            <Button
-              variant="clashofclans"
-              disabled={board.fen.toString() === Fen.emptyPosition}
-              onClick={() => hideModal(startGameModalRef)}
-            >
+            <Button variant="clashofclans" disabled={!isActiveGame} onClick={continueGame}>
               Continue
             </Button>
             <Button variant="clashofclans" onClick={startGame}>
@@ -290,13 +303,14 @@ export default function Referee() {
           ref={chessboardRef}
           playMove={playMove}
           pieces={board.pieces}
-          turn={boardRotates ? board.currentTeam : undefined}
+          rotate={boardRotates}
+          currentTeam={board.currentTeam}
           lastMovePlayed={board.getLastMove}
         />
         <Playertag playerName={boardRotates && board.currentTeam === TeamType.BLACK ? playerBlack : playerWhite} />
       </main>
 
-      {board.pieces.length > 0 && (
+      {isActiveGame && (
         <div className="absolute top-1 right-1">
           <Button variant="clashofclans" onClick={resignGame}>
             Resign

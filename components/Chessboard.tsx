@@ -13,12 +13,13 @@ import '@/styles/chessboard.css';
 type ChessboardProps = {
   playMove: (piece: Piece, position: Position) => boolean;
   pieces: Piece[];
-  turn?: TeamType;
+  rotate: boolean;
+  currentTeam: TeamType;
   lastMovePlayed: Move;
 };
 
 export default forwardRef(function Chessboard(
-  { playMove, pieces, turn, lastMovePlayed }: ChessboardProps,
+  { playMove, pieces, rotate, currentTeam, lastMovePlayed }: ChessboardProps,
   ref: Ref<HTMLDivElement>
 ) {
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
@@ -36,8 +37,8 @@ export default forwardRef(function Chessboard(
     );
 
     // Toggle position coordinates based on turn
-    const xPos = turn && turn === TeamType.BLACK ? 7 - tileX : tileX;
-    const yPos = turn && turn === TeamType.BLACK ? 7 - tileY : tileY;
+    const xPos = rotate && currentTeam === TeamType.BLACK ? 7 - tileX : tileX;
+    const yPos = rotate && currentTeam === TeamType.BLACK ? 7 - tileY : tileY;
 
     return new Position(xPos, yPos);
   };
@@ -64,8 +65,12 @@ export default forwardRef(function Chessboard(
         // Piece was selected, so try to move it
         const selectedPiece = pieces.find((p) => p.isSamePosition(selectedPosition));
         if (selectedPiece) {
-          // Check if the played move is valid
-          const success = playMove(selectedPiece.clone(), clickPosition.clone());
+          let success = false;
+          // Play move only if clickPosition belongs to any possible moves of selectedPosition
+          if (selectedPiece.possibleMoves?.some((m) => m.isSamePosition(clickPosition))) {
+            // Set success flag true if the move is valid
+            success = playMove(selectedPiece.clone(), clickPosition.clone());
+          }
 
           // If move is invalid, but another piece is properly clicked, select it
           if (!success && element.classList.contains('chess-piece') && isProperClick) {
@@ -95,6 +100,10 @@ export default forwardRef(function Chessboard(
     if (element.classList.contains('chess-piece') && chessboard) {
       // Find (x, y) on board where the piece is grabbed
       const grabbedPosition = _getMouseCoordinatesOnBoard(e, chessboard);
+
+      // If grabbedPiece is not of currentTeam, don't grab
+      const grabbedPiece = pieces.find((p) => p.isSamePosition(grabbedPosition));
+      if (grabbedPiece && grabbedPiece.team !== currentTeam) return;
 
       setGrabPosition(grabbedPosition);
 
@@ -144,10 +153,12 @@ export default forwardRef(function Chessboard(
       const currentPiece = pieces.find((p) => p.isSamePosition(grabPosition));
 
       if (currentPiece) {
-        // Check if the played move is valid
-        playMove(currentPiece.clone(), dropPosition.clone());
+        if (!dropPosition.isSamePosition(grabPosition)) {
+          // If grab and drop position are different, try to play the move
+          playMove(currentPiece.clone(), dropPosition.clone());
+        }
 
-        // Resets the piece position tp snap at place
+        // Resets the piece position to snap at place
         activePiece.style.position = 'relative';
         activePiece.style.zIndex = '10';
         activePiece.style.removeProperty('left');
@@ -164,8 +175,8 @@ export default forwardRef(function Chessboard(
   for (let j = VERTICAL_AXIS.length - 1; j >= 0; j--) {
     for (let i = 0; i < HORIZONTAL_AXIS.length; i++) {
       // Toggle position coordinates based on turn
-      const xPos = turn && turn === TeamType.BLACK ? 7 - i : i;
-      const yPos = turn && turn === TeamType.BLACK ? 7 - j : j;
+      const xPos = rotate && currentTeam === TeamType.BLACK ? 7 - i : i;
+      const yPos = rotate && currentTeam === TeamType.BLACK ? 7 - j : j;
 
       // Find piece at the tile and set it's image
       const piece = pieces.find((p) => p.isSamePosition(new Position(xPos, yPos)));
@@ -197,7 +208,7 @@ export default forwardRef(function Chessboard(
           key={`${i}-${j}`}
           xPos={xPos}
           yPos={yPos}
-          turn={turn}
+          turn={rotate ? currentTeam : undefined}
           image={image}
           marked={isTileInPossibleMoves}
           highlighted={isTileSelected || isTileInLastMovePlayed}
