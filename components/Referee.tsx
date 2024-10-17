@@ -47,7 +47,7 @@ export default function Referee() {
 
   // Whenever boardstate changes, update the FEN in the local storage
   useEffect(() => {
-    console.log(board.fen.toString());
+    // console.log(board.fen.toString());
     setStoredFen(board.fen.toString());
     setStoredLastMoveObj(board.getLastMove);
   }, [board]);

@@ -242,13 +242,12 @@ export class Board {
             this.fen = this.fen.update({ halfMoves: this.fen.halfMoves + 1 });
           }
 
-          // File for promoting a pawn
-          const promotionFile = piece.team === TeamType.WHITE ? 7 : 0;
-
           // Update position for the played piece
           piece.position.x = destination.x;
           piece.position.y = destination.y;
 
+          // File for promoting a pawn
+          const promotionFile = piece.team === TeamType.WHITE ? 7 : 0;
           // Check if pawn promotion is going to happen
           if (destination.y !== promotionFile || !piece.isPawn) {
             // Sound of promote will be played in promotePawn() in Reference.tsx
